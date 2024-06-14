@@ -1,10 +1,10 @@
 :root {
-    --principal: #1867c0;
+    --principal: #0866FF;
     --principal_hover: #40a5f7;
     --principal_transparent: #2a99f3c2;
-    --secundario: #ffff00;
-    --secundario2: #e7d803;
-    --secundario_hover: #e4e400;
+    --secundario: #ffffff;
+    --secundario2: #ffffff;
+    --secundario_hover: #ffffff;
     --fondo_app: #f2f2f2;
     --correcto: #d2e7c9;
     --transparente: #000000bd;
@@ -27,6 +27,11 @@ textarea {
     font-family: Arial, sans-serif !important; /* Cambia 'Roboto' por el nombre de tu fuente */
 }
 
+.bg-principal{
+    background-color: var(--principal);
+    color: white;
+}
+
 .contenedor_login {
     display: flex;
     justify-content: center;
@@ -45,7 +50,7 @@ iframe {
 }
 
 .v-main {
-    background-color: #fffde7 !important;
+    background-color: rgb(240, 240, 240) !important;
 }
 
 .text-white {
@@ -99,8 +104,8 @@ iframe {
 /* SIDEBAR */
 .__sidebar .active {
     border-radius: 8px;
-    background-color: var(--secundario);
-    color: black;
+    background-color: var(--principal);
+    color: white;
 }
 
 /* Estilo del contenedor del cajón de navegación */
@@ -167,7 +172,7 @@ iframe {
 .__sidebar .v-list-group__items .v-list-item.active .v-list-item__overlay {
     background: none;
     background-color: none;
-    color: var(--secundario);
+    color: var(--principal);
 }
 
 /* NAVBAR */

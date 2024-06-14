@@ -13,7 +13,7 @@
 
     <style>
         .v-container.login {
-            background-image: url('{{ asset('imgs/fondo_almacen.webp') }}') !important;
+            background-image: url('{{ asset('imgs/fondo_login.webp') }}') !important;
             background-size: cover;
             padding: 0px;
         }

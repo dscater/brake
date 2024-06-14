@@ -113,7 +113,7 @@ const cerrarDialog = () => {
     <v-row justify="center">
         <v-dialog v-model="dialog" width="1024" persistent scrollable>
             <v-card>
-                <v-card-title class="border-b bg-primary pa-5">
+                <v-card-title class="border-b bg-principal pa-5">
                     <v-icon
                         icon="mdi-close"
                         class="float-right"
@@ -401,7 +401,7 @@ const cerrarDialog = () => {
                         Cancelar
                     </v-btn>
                     <v-btn
-                        class="bg-primary"
+                        class="bg-principal"
                         prepend-icon="mdi-content-save"
                         @click="enviarFormulario"
                     >

@@ -23,11 +23,6 @@ const user_logeado = ref({
 
 const submenus = {
     "reportes.usuarios": "Reportes",
-    "reportes.productos": "Reportes",
-    "reportes.ingreso_productos": "Reportes",
-    "reportes.salida_productos": "Reportes",
-    "reportes.inventario_productos": "Reportes",
-    "reportes.kardex_productos": "Reportes",
 };
 
 const route_current = ref("");
@@ -83,13 +78,13 @@ const scrollActive = () => {
         :permanent="!mobile"
         :temporary="mobile"
         v-model="drawer"
-        class="border-0 elevation-2 __sidebar bg-primary"
+        class="border-0 elevation-2 __sidebar"
         :width="width"
         id="sidebar"
     >
         <v-sheet>
             <div
-                class="w-100 d-flex flex-column align-center elevation-1 bg-primary pa-2 __info_usuario"
+                class="w-100 d-flex flex-column align-center elevation-1 bg-principal pa-2 __info_usuario"
             >
                 <v-avatar
                     class="mb-1"
@@ -105,21 +100,26 @@ const scrollActive = () => {
                         {{ oUser.iniciales_nombre }}
                     </span>
                 </v-avatar>
-                <div v-show="!rail" class="text-caption font-weight-bold">
+                <div
+                    v-show="!rail"
+                    class="text-caption font-weight-bold text-white"
+                >
                     {{ oUser.tipo }}
                 </div>
-                <div v-show="!rail" class="text-body">
+                <div v-show="!rail" class="text-body text-white">
                     {{ oUser.full_name }}
                 </div>
             </div>
         </v-sheet>
 
-        <v-list class="mt-1 px-0" v-model:opened="menu_open">
-            <v-list-item class="text-caption bg-blue-darken-4">
+        <v-list class="px-0" v-model:opened="menu_open">
+            <v-list-item class="text-caption bg-grey-lighten-3">
                 <span v-if="rail && !mobile" class="text-center d-block"
                     ><v-icon>mdi-dots-horizontal</v-icon></span
                 >
-                <span v-else>INICIO</span></v-list-item
+                <span v-else class="font-weight-bold d-block text-center"
+                    >INICIO</span
+                ></v-list-item
             >
             <v-list-item
                 class="mx-3"
@@ -141,45 +141,22 @@ const scrollActive = () => {
                 >
             </v-list-item>
             <v-list-item
-                class="text-caption bg-blue-darken-4 pa-0 px-5"
+                class="text-caption pa-0 px-5 bg-grey-lighten-3"
                 v-if="
                     oUser.permisos.includes('usuarios.index') ||
-                    oUser.permisos.includes('proveedors.index') ||
                     oUser.permisos.includes('categorias.index') ||
-                    oUser.permisos.includes('tipo_productos.index') ||
-                    oUser.permisos.includes('productos.geolocalizacion') ||
-                    oUser.permisos.includes('tipo_ingresos.index') ||
+                    oUser.permisos.includes('conceptos.index') ||
                     oUser.permisos.includes('ingresos.index') ||
-                    oUser.permisos.includes('tipo_salidas.index') ||
-                    oUser.permisos.includes('salidas_productos.index') ||
-                    oUser.permisos.includes('notificacions.index')
+                    oUser.permisos.includes('egresos.index')
                 "
             >
                 <span v-if="rail && !mobile" class="text-center d-block"
                     ><v-icon>mdi-dots-horizontal</v-icon></span
                 >
-                <span v-else>ADMINISTRACIÓN</span></v-list-item
+                <span v-else class="font-weight-bold d-block text-center"
+                    >ADMINISTRACIÓN</span
+                ></v-list-item
             >
-            <v-list-item
-                :class="[
-                    route_current == 'proveedors.index' ? 'active' : '',
-                    drawer ? 'px-3' : '',
-                ]"
-                class="mx-3"
-                v-if="oUser.permisos.includes('proveedors.index')"
-                prepend-icon="mdi-account-badge"
-                @click="cambiarUrl(route('proveedors.index'))"
-                link
-            >
-                <v-list-item-title>Proveedores</v-list-item-title>
-                <v-tooltip
-                    v-if="rail && !mobile"
-                    color="white"
-                    activator="parent"
-                    location="end"
-                    >Proveedores</v-tooltip
-                >
-            </v-list-item>
             <v-list-item
                 :class="[
                     route_current == 'categorias.index' ? 'active' : '',
@@ -202,62 +179,22 @@ const scrollActive = () => {
             </v-list-item>
             <v-list-item
                 :class="[
-                    route_current == 'tipo_productos.index' ? 'active' : '',
+                    route_current == 'conceptos.index' ? 'active' : '',
                     drawer ? 'px-3' : '',
                 ]"
                 class="mx-3"
-                v-if="oUser.permisos.includes('tipo_productos.index')"
+                v-if="oUser.permisos.includes('conceptos.index')"
                 prepend-icon="mdi-tag-multiple"
-                @click="cambiarUrl(route('tipo_productos.index'))"
+                @click="cambiarUrl(route('conceptos.index'))"
                 link
             >
-                <v-list-item-title>Tipo de Productos</v-list-item-title>
+                <v-list-item-title>Conceptos de Movimientos</v-list-item-title>
                 <v-tooltip
                     v-if="rail && !mobile"
                     color="white"
                     activator="parent"
                     location="end"
-                    >Tipo de Productos</v-tooltip
-                >
-            </v-list-item>
-            <v-list-item
-                :class="[
-                    route_current == 'productos.index' ? 'active' : '',
-                    drawer ? 'px-3' : '',
-                ]"
-                class="mx-3"
-                v-if="oUser.permisos.includes('productos.index')"
-                prepend-icon="mdi-clipboard-list"
-                @click="cambiarUrl(route('productos.index'))"
-                link
-            >
-                <v-list-item-title>Productos</v-list-item-title>
-                <v-tooltip
-                    v-if="rail && !mobile"
-                    color="white"
-                    activator="parent"
-                    location="end"
-                    >Productos</v-tooltip
-                >
-            </v-list-item>
-            <v-list-item
-                :class="[
-                    route_current == 'tipo_ingresos.index' ? 'active' : '',
-                    drawer ? 'px-3' : '',
-                ]"
-                class="mx-3"
-                v-if="oUser.permisos.includes('tipo_ingresos.index')"
-                prepend-icon="mdi-view-list"
-                @click="cambiarUrl(route('tipo_ingresos.index'))"
-                link
-            >
-                <v-list-item-title>Tipo de Ingresos</v-list-item-title>
-                <v-tooltip
-                    v-if="rail && !mobile"
-                    color="white"
-                    activator="parent"
-                    location="end"
-                    >Tipo de Ingresos</v-tooltip
+                    >Conceptos de Movimientos</v-tooltip
                 >
             </v-list-item>
             <v-list-item
@@ -276,81 +213,40 @@ const scrollActive = () => {
                 @click="cambiarUrl(route('ingresos.index'))"
                 link
             >
-                <v-list-item-title>Ingreso de Productos</v-list-item-title>
+                <v-list-item-title>Ingresos Económicos</v-list-item-title>
                 <v-tooltip
                     v-if="rail && !mobile"
                     color="white"
                     activator="parent"
                     location="end"
-                    >Ingreso de Productos</v-tooltip
+                    >Ingresos Económicos</v-tooltip
                 >
             </v-list-item>
             <v-list-item
                 :class="[
-                    route_current == 'tipo_salidas.index' ? 'active' : '',
-                    drawer ? 'px-3' : '',
-                ]"
-                class="mx-3"
-                v-if="oUser.permisos.includes('tipo_salidas.index')"
-                prepend-icon="mdi-view-list"
-                @click="cambiarUrl(route('tipo_salidas.index'))"
-                link
-            >
-                <v-list-item-title>Tipo de Salidas</v-list-item-title>
-                <v-tooltip
-                    v-if="rail && !mobile"
-                    color="white"
-                    activator="parent"
-                    location="end"
-                    >Tipo de Salidas</v-tooltip
-                >
-            </v-list-item>
-            <v-list-item
-                :class="[
-                    route_current == 'salidas.index' ||
-                    route_current == 'salidas.create' ||
-                    route_current == 'salidas.edit' ||
-                    route_current == 'salidas.show'
+                    route_current == 'egresos.index' ||
+                    route_current == 'egresos.create' ||
+                    route_current == 'egresos.edit' ||
+                    route_current == 'egresos.show'
                         ? 'active'
                         : '',
                     drawer ? 'px-3' : '',
                 ]"
                 class="mx-3"
-                v-if="oUser.permisos.includes('salidas.index')"
+                v-if="oUser.permisos.includes('egresos.index')"
                 prepend-icon="mdi-clipboard-arrow-right"
-                @click="cambiarUrl(route('salidas.index'))"
+                @click="cambiarUrl(route('egresos.index'))"
                 link
             >
-                <v-list-item-title>Salida de Productos</v-list-item-title>
+                <v-list-item-title>Egresos Económicos</v-list-item-title>
                 <v-tooltip
                     v-if="rail && !mobile"
                     color="white"
                     activator="parent"
                     location="end"
-                    >Salida de Productos</v-tooltip
+                    >Egresos Económicos</v-tooltip
                 >
             </v-list-item>
-            <v-list-item
-                :class="[
-                    route_current == 'notificacions.index' ? 'active' : '',
-                    drawer ? 'px-3' : '',
-                ]"
-                class="mx-3"
-                v-if="oUser.permisos.includes('notificacions.index')"
-                prepend-icon="mdi-bell"
-                @click="cambiarUrl(route('notificacions.index'))"
-                link
-            >
-                <v-list-item-title>Notificaciones</v-list-item-title>
-                <v-tooltip
-                    v-if="rail && !mobile"
-                    color="white"
-                    activator="parent"
-                    location="end"
-                    >Notificaciones</v-tooltip
-                >
-            </v-list-item>
-
             <v-list-item
                 :class="[
                     route_current == 'usuarios.index' ? 'active' : '',
@@ -371,22 +267,15 @@ const scrollActive = () => {
                     >Usuarios</v-tooltip
                 >
             </v-list-item>
-
             <v-list-item
-                class="text-caption bg-blue-darken-4"
-                v-if="
-                    oUser.permisos.includes('reportes.usuarios') ||
-                    oUser.permisos.includes('reportes.productos') ||
-                    oUser.permisos.includes('reportes.ingreso_productos') ||
-                    oUser.permisos.includes('reportes.salida_productos') ||
-                    oUser.permisos.includes('reportes.inventario_productos') ||
-                    oUser.permisos.includes('reportes.kardex_productos') ||
-                    oUser.permisos.includes('reportes.analisis_almacen')
-                "
+                class="text-caption bg-grey-lighten-3"
+                v-if="oUser.permisos.includes('reportes.usuarios')"
                 ><span v-if="rail && !mobile" class="text-center d-block"
                     ><v-icon>mdi-dots-horizontal</v-icon></span
                 >
-                <span v-else>REPORTES</span></v-list-item
+                <span v-else class="font-weight-bold d-block text-center"
+                    >REPORTES</span
+                ></v-list-item
             >
             <!-- SUBGROUP -->
             <v-list-group
@@ -394,11 +283,7 @@ const scrollActive = () => {
                 class="mx-3"
                 v-if="
                     oUser.permisos.includes('reportes.usuarios') ||
-                    oUser.permisos.includes('reportes.productos') ||
-                    oUser.permisos.includes('reportes.ingreso_productos') ||
-                    oUser.permisos.includes('reportes.salida_productos') ||
-                    oUser.permisos.includes('reportes.inventario_productos') ||
-                    oUser.permisos.includes('reportes.kardex_productos')
+                    oUser.permisos.includes('reportes.productos')
                 "
             >
                 <template v-slot:activator="{ props }">
@@ -408,11 +293,7 @@ const scrollActive = () => {
                         title="Reportes"
                         :class="[
                             route_current == 'reporutes.usuarios' ||
-                            route_current == 'reportes.productos' ||
-                            route_current == 'reportes.ingreso_productos' ||
-                            route_current == 'reportes.salida_productos' ||
-                            route_current == 'reportes.inventario_productos' ||
-                            route_current == 'reportes.kardex_productos'
+                            route_current == 'reportes.productos'
                                 ? 'active'
                                 : '',
                         ]"
@@ -445,136 +326,14 @@ const scrollActive = () => {
                         >Usuarios</v-tooltip
                     ></v-list-item
                 >
-                <v-list-item
-                    v-if="oUser.permisos.includes('reportes.productos')"
-                    prepend-icon="mdi-chevron-right"
-                    title="Lista de Productos"
-                    :class="[
-                        route_current == 'reportes.productos' ? 'active' : '',
-                    ]"
-                    @click="cambiarUrl(route('reportes.productos'))"
-                    link
-                >
-                    <v-tooltip
-                        v-if="rail && !mobile"
-                        color="white"
-                        activator="parent"
-                        location="end"
-                        >Lista de Productos</v-tooltip
-                    ></v-list-item
-                >
-                <v-list-item
-                    v-if="oUser.permisos.includes('reportes.ingreso_productos')"
-                    prepend-icon="mdi-chevron-right"
-                    title="Ingreso de Productos"
-                    :class="[
-                        route_current == 'reportes.ingreso_productos'
-                            ? 'active'
-                            : '',
-                        drawer ? 'px-3' : '',
-                    ]"
-                    @click="cambiarUrl(route('reportes.ingreso_productos'))"
-                    link
-                >
-                    <v-tooltip
-                        v-if="rail && !mobile"
-                        color="white"
-                        activator="parent"
-                        location="end"
-                        >Ingreso de Productos</v-tooltip
-                    ></v-list-item
-                >
-                <v-list-item
-                    v-if="oUser.permisos.includes('reportes.salida_productos')"
-                    prepend-icon="mdi-chevron-right"
-                    title="Salida de Productos"
-                    :class="[
-                        route_current == 'reportes.salida_productos'
-                            ? 'active'
-                            : '',
-                        drawer ? 'px-3' : '',
-                    ]"
-                    @click="cambiarUrl(route('reportes.salida_productos'))"
-                    link
-                >
-                    <v-tooltip
-                        v-if="rail && !mobile"
-                        color="white"
-                        activator="parent"
-                        location="end"
-                        >Salida de Productos</v-tooltip
-                    ></v-list-item
-                >
-                <v-list-item
-                    v-if="
-                        oUser.permisos.includes('reportes.inventario_productos')
-                    "
-                    prepend-icon="mdi-chevron-right"
-                    title="Inventario de Productos"
-                    :class="[
-                        route_current == 'reportes.inventario_productos'
-                            ? 'active'
-                            : '',
-                    ]"
-                    @click="cambiarUrl(route('reportes.inventario_productos'))"
-                    link
-                >
-                    <v-tooltip
-                        v-if="rail && !mobile"
-                        color="white"
-                        activator="parent"
-                        location="end"
-                        >Inventario de Productos</v-tooltip
-                    ></v-list-item
-                >
-                <v-list-item
-                    v-if="oUser.permisos.includes('reportes.kardex_productos')"
-                    prepend-icon="mdi-chevron-right"
-                    title="Kardex de Productos"
-                    :class="[
-                        route_current == 'reportes.kardex_productos'
-                            ? 'active'
-                            : '',
-                    ]"
-                    @click="cambiarUrl(route('reportes.kardex_productos'))"
-                    link
-                >
-                    <v-tooltip
-                        v-if="rail && !mobile"
-                        color="white"
-                        activator="parent"
-                        location="end"
-                        >Kardex de Productos</v-tooltip
-                    ></v-list-item
-                >
             </v-list-group>
-            <v-list-item
-                :class="[
-                    route_current == 'reportes.analisis_almacen'
-                        ? 'active'
-                        : '',
-                    drawer ? 'px-3' : '',
-                ]"
-                class="mx-3"
-                v-if="oUser.permisos.includes('reportes.analisis_almacen')"
-                prepend-icon="mdi-chart-bar"
-                @click="cambiarUrl(route('reportes.analisis_almacen'))"
-                link
-            >
-                <v-list-item-title>Análisis de almacén</v-list-item-title>
-                <v-tooltip
-                    v-if="rail && !mobile"
-                    color="white"
-                    activator="parent"
-                    location="end"
-                    >Análisis de almacén</v-tooltip
-                >
-            </v-list-item>
-            <v-list-item class="text-caption bg-blue-darken-4"
+            <v-list-item class="text-caption bg-grey-lighten-3"
                 ><span v-if="rail && !mobile" class="text-center d-block"
                     ><v-icon>mdi-dots-horizontal</v-icon></span
                 >
-                <span v-else>OTROS</span></v-list-item
+                <span v-else class="font-weight-bold d-block text-center"
+                    >OTROS</span
+                ></v-list-item
             >
             <v-list-item
                 v-if="oUser.permisos.includes('configuracions.index')"

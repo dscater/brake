@@ -32,6 +32,21 @@ class UserController extends Controller
             "categorias.edit",
             "categorias.destroy",
 
+            "conceptos.index",
+            "conceptos.create",
+            "conceptos.edit",
+            "conceptos.destroy",
+
+            "ingresos.index",
+            "ingresos.create",
+            "ingresos.edit",
+            "ingresos.destroy",
+
+            "egresos.index",
+            "egresos.create",
+            "egresos.edit",
+            "egresos.destroy",
+
             "reportes.usuarios",
         ],
         "OPERADOR" => [],
@@ -77,50 +92,43 @@ class UserController extends Controller
             $array_infos[] = [
                 'label' => 'Usuarios',
                 'cantidad' => count(User::where('id', '!=', 1)->get()),
-                'color' => 'bg-blue-darken-2',
+                'color' => 'bg-principal text-white',
                 'icon' => asset("imgs/icon_users.png"),
                 "url" => "usuarios.index"
             ];
         }
-        if (in_array('proveedors.index', self::$permisos[$tipo])) {
+        if (in_array('categorias.index', self::$permisos[$tipo])) {
             $array_infos[] = [
-                'label' => 'Proveedores',
-                'cantidad' => count(Proveedor::all()),
-                'color' => 'bg-orange-darken-3',
-                'icon' => asset("imgs/supplier.png"),
-                "url" => "proveedors.index"
+                'label' => 'Categorías',
+                'cantidad' => count(Categoria::all()),
+                'color' => 'bg-light-blue-lighten-4',
+                'icon' => asset("imgs/checklist.png"),
+                "url" => "categorias.index"
             ];
         }
 
-        if (in_array('productos.index', self::$permisos[$tipo])) {
-            $array_infos[] = [
-                'label' => 'productos',
-                'cantidad' => count(Producto::where("status", 1)->get()),
-                'color' => 'bg-grey-darken-2',
-                'icon' => asset("imgs/box.png"),
-                "url" => "productos.index"
-            ];
-        }
 
         if (in_array('ingresos.index', self::$permisos[$tipo])) {
             $array_infos[] = [
-                'label' => 'ingresos',
-                'cantidad' => count(Ingreso::all()),
-                'color' => 'bg-yellow-accent-3',
-                'icon' => asset("imgs/in_stock.png"),
+                'label' => 'Ingresos Económicos',
+                'cantidad' => 0,
+                'color' => 'bg-green-lighten-4',
+                'icon' => asset("imgs/documentos.png"),
                 "url" => "ingresos.index"
             ];
         }
 
-        if (in_array('salidas.index', self::$permisos[$tipo])) {
+
+        if (in_array('egresos.index', self::$permisos[$tipo])) {
             $array_infos[] = [
-                'label' => 'salidas',
-                'cantidad' => count(Salida::all()),
-                'color' => 'bg-indigo',
-                'icon' => asset("imgs/delivery.png"),
-                "url" => "salidas.index"
+                'label' => 'Egresos Económicos',
+                'cantidad' => 0,
+                'color' => 'bg-red-lighten-4',
+                'icon' => asset("imgs/documentos.png"),
+                "url" => "egresos.index"
             ];
         }
+
 
         return $array_infos;
     }

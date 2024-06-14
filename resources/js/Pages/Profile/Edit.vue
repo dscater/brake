@@ -321,7 +321,7 @@ const enviaFormulario = () => {
                         </form>
                     </v-card-item>
                     <v-card-actions>
-                        <v-btn class="bg-primary" @click="enviaFormulario"
+                        <v-btn class="bg-principal" @click="enviaFormulario"
                             >Guardar cambios</v-btn
                         >
                     </v-card-actions>

@@ -48,17 +48,17 @@ onMounted(() => {
     <v-container class="ma-0 login">
         <v-row align="center" justify="center" class="contenedor_login">
             <v-col cols="12" md="4" xl="3">
-                <v-card class="elevation-6 mt-10 bg-blue-darken-3">
+                <v-card class="elevation-6 mt-10">
                     <v-row>
-                        <v-col cols="12" class="border">
-                            <v-card-text class="bg-blue-darken-4">
+                        <v-col cols="12">
+                            <v-card-text class="bg-principal">
                                 <v-img
                                     :src="oConfiguracion.url_logo"
                                     class="w-50 mx-auto"
                                 ></v-img>
                             </v-card-text>
-                            <v-card-title class="bg-blue-darken-4">
-                                <h3 class="text-center mb-0 pb-0">
+                            <v-card-title class="bg-principal">
+                                <h3 class="text-center mb-0 pb-0 text-white text-h4">
                                     {{ oConfiguracion.razon_social }}
                                 </h3>
                             </v-card-title>
@@ -79,7 +79,7 @@ onMounted(() => {
                                     >
                                         <v-col cols="12" md="11">
                                             <div
-                                                class="text-white text-subtitle-1 text-medium-emphasis"
+                                                class="text-subtitle-1 text-medium-emphasis"
                                             >
                                                 Usuario
                                             </div>
@@ -99,14 +99,14 @@ onMounted(() => {
                                                 placeholder="Ingresa tu usuario"
                                                 prepend-inner-icon="mdi-account"
                                                 variant="outlined"
-                                                color="yellow"
+                                                color="primary"
                                                 autocomplete="false"
                                                 v-model="form.usuario"
                                                 autofocus=""
                                             ></v-text-field>
 
                                             <div
-                                                class="text-white text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
+                                                class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
                                             >
                                                 Contraseña
                                             </div>
@@ -136,7 +136,7 @@ onMounted(() => {
                                                 placeholder="Ingresa tu contraseña"
                                                 prepend-inner-icon="mdi-lock-outline"
                                                 variant="outlined"
-                                                color="yellow"
+                                                color="primary"
                                                 @click:append-inner="
                                                     visible = !visible
                                                 "
@@ -144,11 +144,9 @@ onMounted(() => {
                                                 v-model="form.password"
                                             ></v-text-field>
                                             <v-btn
-                                                class="mt-2"
+                                                class="mt-2 bg-principal text-white"
                                                 elevation="4"
                                                 rounded="0"
-                                                color="yellow"
-                                                dark
                                                 block
                                                 type="submit"
                                                 >ACCEDER</v-btn

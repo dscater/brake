@@ -118,7 +118,7 @@ onMounted(() => {
                         </v-btn>
                     </template>
                     <v-list class="pt-0" style="margin-top: -10px">
-                        <v-list-item class="bg-blue-darken-3">
+                        <v-list-item class="bg-principal">
                             <p class="text-body-1 text-center w-100">
                                 {{ sin_ver }} Notificaciónes Nuevas
                             </p>
