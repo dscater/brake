@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 13-06-2024 a las 19:02:26
+-- Tiempo de generación: 18-06-2024 a las 19:28:48
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -32,6 +32,29 @@ CREATE TABLE `categorias` (
   `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `descripcion` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `tipo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fecha_registro` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `categorias`
+--
+
+INSERT INTO `categorias` (`id`, `nombre`, `descripcion`, `tipo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(1, 'CATEGORIA #1', 'DESC CATEGORIA 1', 'INGRESO', '2024-06-18', '2024-06-18 16:41:24', '2024-06-18 16:41:45');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `conceptos`
+--
+
+CREATE TABLE `conceptos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `categoria_id` bigint UNSIGNED NOT NULL,
+  `nombre` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` varchar(600) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fecha_registro` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -69,6 +92,36 @@ INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `razon_social`, `
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `egresos`
+--
+
+CREATE TABLE `egresos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `categoria_id` bigint UNSIGNED NOT NULL,
+  `fecha_registro` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `egreso_detalles`
+--
+
+CREATE TABLE `egreso_detalles` (
+  `id` bigint UNSIGNED NOT NULL,
+  `concepto_id` bigint UNSIGNED NOT NULL,
+  `descripcion` varchar(600) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cantidad` double(8,2) NOT NULL,
+  `monto` decimal(24,2) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `historial_accions`
 --
 
@@ -86,44 +139,43 @@ CREATE TABLE `historial_accions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `historial_accions`
+--
+
+INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `fecha`, `hora`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:24<br/>', NULL, 'CATEGORIAS', '2024-06-18', '12:41:25', '2024-06-18 16:41:25', '2024-06-18 16:41:25'),
+(2, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:24<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: EGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:31<br/>', 'CATEGORIAS', '2024-06-18', '12:41:31', '2024-06-18 16:41:31', '2024-06-18 16:41:31'),
+(3, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: EGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:31<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:38<br/>', 'CATEGORIAS', '2024-06-18', '12:41:38', '2024-06-18 16:41:38', '2024-06-18 16:41:38'),
+(4, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:38<br/>', 'id: 1<br/>nombre: CATEGORIA #1ADS<br/>descripcion: DESC CATEGORIA 1ASD<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:41<br/>', 'CATEGORIAS', '2024-06-18', '12:41:41', '2024-06-18 16:41:41', '2024-06-18 16:41:41'),
+(5, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1ADS<br/>descripcion: DESC CATEGORIA 1ASD<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:41<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:45<br/>', 'CATEGORIAS', '2024-06-18', '12:41:45', '2024-06-18 16:41:45', '2024-06-18 16:41:45');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `migrations`
+-- Estructura de tabla para la tabla `ingresos`
 --
 
-CREATE TABLE `migrations` (
-  `id` int UNSIGNED NOT NULL,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL
+CREATE TABLE `ingresos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `categoria_id` bigint UNSIGNED NOT NULL,
+  `fecha_registro` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Volcado de datos para la tabla `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2014_10_12_000000_create_users_table', 1),
-(2, '2019_12_14_000001_create_personal_access_tokens_table', 1),
-(3, '2024_01_31_165641_create_configuracions_table', 1),
-(4, '2024_02_02_205431_create_historial_accions_table', 1),
-(5, '2024_05_15_172313_create_categorias_table', 1);
-
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `personal_access_tokens`
+-- Estructura de tabla para la tabla `ingreso_detalles`
 --
 
-CREATE TABLE `personal_access_tokens` (
+CREATE TABLE `ingreso_detalles` (
   `id` bigint UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tokenable_id` bigint UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci,
-  `last_used_at` timestamp NULL DEFAULT NULL,
-  `expires_at` timestamp NULL DEFAULT NULL,
+  `concepto_id` bigint UNSIGNED NOT NULL,
+  `descripcion` varchar(600) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cantidad` double(8,2) NOT NULL,
+  `monto` decimal(24,2) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -172,10 +224,31 @@ ALTER TABLE `categorias`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `conceptos`
+--
+ALTER TABLE `conceptos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `conceptos_categoria_id_foreign` (`categoria_id`);
+
+--
 -- Indices de la tabla `configuracions`
 --
 ALTER TABLE `configuracions`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `egresos`
+--
+ALTER TABLE `egresos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `egresos_categoria_id_foreign` (`categoria_id`);
+
+--
+-- Indices de la tabla `egreso_detalles`
+--
+ALTER TABLE `egreso_detalles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `egreso_detalles_concepto_id_foreign` (`concepto_id`);
 
 --
 -- Indices de la tabla `historial_accions`
@@ -184,18 +257,18 @@ ALTER TABLE `historial_accions`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `migrations`
+-- Indices de la tabla `ingresos`
 --
-ALTER TABLE `migrations`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `ingresos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ingresos_categoria_id_foreign` (`categoria_id`);
 
 --
--- Indices de la tabla `personal_access_tokens`
+-- Indices de la tabla `ingreso_detalles`
 --
-ALTER TABLE `personal_access_tokens`
+ALTER TABLE `ingreso_detalles`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
-  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
+  ADD KEY `ingreso_detalles_concepto_id_foreign` (`concepto_id`);
 
 --
 -- Indices de la tabla `users`
@@ -212,6 +285,12 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `conceptos`
+--
+ALTER TABLE `conceptos`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -221,21 +300,33 @@ ALTER TABLE `configuracions`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT de la tabla `historial_accions`
+-- AUTO_INCREMENT de la tabla `egresos`
 --
-ALTER TABLE `historial_accions`
+ALTER TABLE `egresos`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `migrations`
+-- AUTO_INCREMENT de la tabla `egreso_detalles`
 --
-ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+ALTER TABLE `egreso_detalles`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `personal_access_tokens`
+-- AUTO_INCREMENT de la tabla `historial_accions`
 --
-ALTER TABLE `personal_access_tokens`
+ALTER TABLE `historial_accions`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT de la tabla `ingresos`
+--
+ALTER TABLE `ingresos`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ingreso_detalles`
+--
+ALTER TABLE `ingreso_detalles`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -243,6 +334,40 @@ ALTER TABLE `personal_access_tokens`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `conceptos`
+--
+ALTER TABLE `conceptos`
+  ADD CONSTRAINT `conceptos_categoria_id_foreign` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`);
+
+--
+-- Filtros para la tabla `egresos`
+--
+ALTER TABLE `egresos`
+  ADD CONSTRAINT `egresos_categoria_id_foreign` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`);
+
+--
+-- Filtros para la tabla `egreso_detalles`
+--
+ALTER TABLE `egreso_detalles`
+  ADD CONSTRAINT `egreso_detalles_concepto_id_foreign` FOREIGN KEY (`concepto_id`) REFERENCES `conceptos` (`id`);
+
+--
+-- Filtros para la tabla `ingresos`
+--
+ALTER TABLE `ingresos`
+  ADD CONSTRAINT `ingresos_categoria_id_foreign` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`);
+
+--
+-- Filtros para la tabla `ingreso_detalles`
+--
+ALTER TABLE `ingreso_detalles`
+  ADD CONSTRAINT `ingreso_detalles_concepto_id_foreign` FOREIGN KEY (`concepto_id`) REFERENCES `conceptos` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
