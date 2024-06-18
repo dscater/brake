@@ -123,7 +123,6 @@ const cerrarDialog = () => {
                                                 ? form.errors?.nombre
                                                 : ''
                                         "
-                                        
                                         variant="underlined"
                                         color="primary"
                                         label="Nombre de Categoria*"
@@ -150,13 +149,50 @@ const cerrarDialog = () => {
                                                 : ''
                                         "
                                         density="compact"
-                                        
                                         variant="underlined"
                                         color="primary"
                                         label="Descripción"
                                         v-model="form.descripcion"
                                         required
                                     ></v-text-field>
+                                </v-col>
+                                <v-col
+                                    cols="12"
+                                    sm="6"
+                                    md="4"
+                                    class="text-center d-flex justify-center align-center"
+                                >
+                                    <div
+                                        class="text-body-2 text-medium-emphasis mr-3"
+                                    >
+                                        Tipo:
+                                    </div>
+                                    <v-switch
+                                        hide-details
+                                        color="primary"
+                                        true-value="INGRESO"
+                                        false-value="EGRESO"
+                                        v-model="form.tipo"
+                                        inset
+                                    >
+                                        <template v-slot:label>
+                                            <v-chip
+                                                class="cursor-pointer"
+                                                :color="
+                                                    form.tipo == 'INGRESO'
+                                                        ? 'primary'
+                                                        : 'error'
+                                                "
+                                                :prepend-icon="
+                                                    form.tipo == 'INGRESO'
+                                                        ? 'mdi-arrow-left-box'
+                                                        : 'mdi-arrow-right-box'
+                                                "
+                                            >
+                                                <span v-text="form.tipo"></span>
+                                            </v-chip>
+                                        </template>
+                                    </v-switch>
                                 </v-col>
                             </v-row>
                         </form>

@@ -6,6 +6,7 @@ const oCategoria = ref({
     id: 0,
     nombre: "",
     descripcion: "",
+    tipo: "EGRESO",
     fecha_registro: "",
     _method: "POST",
 });
@@ -133,6 +134,7 @@ export const useCategorias = () => {
             oCategoria.value.id = item.id;
             oCategoria.value.nombre = item.nombre;
             oCategoria.value.descripcion = item.descripcion;
+            oCategoria.value.tipo = item.tipo;
             oCategoria.value.fecha_registro = item.fecha_registro;
             oCategoria.value._method = "PUT";
             return oCategoria;
@@ -144,6 +146,7 @@ export const useCategorias = () => {
         oCategoria.value.id = 0;
         oCategoria.value.nombre = "";
         oCategoria.value.descripcion = "";
+        oCategoria.value.tipo = "EGRESO";
         oCategoria.value.fecha_registro = "";
         oCategoria.value._method = "POST";
     };

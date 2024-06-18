@@ -56,6 +56,12 @@ const headers = ref([
         sortable: false,
     },
     {
+        title: "Tipo",
+        key: "tipo",
+        align: "start",
+        sortable: false,
+    },
+    {
         title: "Fecha de Registro",
         key: "fecha_registro",
         align: "start",
@@ -208,6 +214,9 @@ const eliminarCategoria = (item) => {
                                     <td>
                                         {{ item.descripcion }}
                                     </td>
+                                    <td>
+                                        {{ item.tipo }}
+                                    </td>
                                     <td>{{ item.fecha_registro_t }}</td>
                                     <td class="text-right">
                                         <v-btn
@@ -256,6 +265,12 @@ const eliminarCategoria = (item) => {
                                                 data-label="Descripción:"
                                             >
                                                 {{ item.descripcion }}
+                                            </li>
+                                            <li
+                                                class="flex-item"
+                                                data-label="Tipo:"
+                                            >
+                                                {{ item.tipo }}
                                             </li>
                                             <li
                                                 class="flex-item"
