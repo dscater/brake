@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 18-06-2024 a las 19:28:48
+-- Tiempo de generación: 19-06-2024 a las 16:37:13
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -42,7 +42,10 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`id`, `nombre`, `descripcion`, `tipo`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, 'CATEGORIA #1', 'DESC CATEGORIA 1', 'INGRESO', '2024-06-18', '2024-06-18 16:41:24', '2024-06-18 16:41:45');
+(1, 'CATEGORIA #1', 'DESC. CATEGORIA 1', 'INGRESO', '2024-06-19', '2024-06-19 15:48:37', '2024-06-19 15:48:37'),
+(2, 'CATEGORIA #2', '', 'EGRESO', '2024-06-19', '2024-06-19 15:48:45', '2024-06-19 15:48:45'),
+(3, 'CATEGORIA 3', '', 'INGRESO', '2024-06-19', '2024-06-19 15:48:53', '2024-06-19 15:48:53'),
+(4, 'CATEGORIA 4', '', 'EGRESO', '2024-06-19', '2024-06-19 15:48:59', '2024-06-19 15:48:59');
 
 -- --------------------------------------------------------
 
@@ -59,6 +62,14 @@ CREATE TABLE `conceptos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `conceptos`
+--
+
+INSERT INTO `conceptos` (`id`, `categoria_id`, `nombre`, `descripcion`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CONCEPTO #1', 'DESC. CONCEPTO 1', '2024-06-19', '2024-06-19 15:49:17', '2024-06-19 15:50:25'),
+(2, 2, 'CONCEPTO #2', 'DESC CONCEPTO 2', '2024-06-19', '2024-06-19 15:52:01', '2024-06-19 15:52:01');
 
 -- --------------------------------------------------------
 
@@ -97,6 +108,7 @@ INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `razon_social`, `
 
 CREATE TABLE `egresos` (
   `id` bigint UNSIGNED NOT NULL,
+  `fecha` date NOT NULL,
   `categoria_id` bigint UNSIGNED NOT NULL,
   `fecha_registro` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -148,7 +160,18 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (2, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:24<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: EGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:31<br/>', 'CATEGORIAS', '2024-06-18', '12:41:31', '2024-06-18 16:41:31', '2024-06-18 16:41:31'),
 (3, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: EGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:31<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:38<br/>', 'CATEGORIAS', '2024-06-18', '12:41:38', '2024-06-18 16:41:38', '2024-06-18 16:41:38'),
 (4, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:38<br/>', 'id: 1<br/>nombre: CATEGORIA #1ADS<br/>descripcion: DESC CATEGORIA 1ASD<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:41<br/>', 'CATEGORIAS', '2024-06-18', '12:41:41', '2024-06-18 16:41:41', '2024-06-18 16:41:41'),
-(5, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1ADS<br/>descripcion: DESC CATEGORIA 1ASD<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:41<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:45<br/>', 'CATEGORIAS', '2024-06-18', '12:41:45', '2024-06-18 16:41:45', '2024-06-18 16:41:45');
+(5, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1ADS<br/>descripcion: DESC CATEGORIA 1ASD<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:41<br/>', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:45<br/>', 'CATEGORIAS', '2024-06-18', '12:41:45', '2024-06-18 16:41:45', '2024-06-18 16:41:45'),
+(6, 1, 'ELIMINACIÓN', 'EL USUARIO  ELIMINÓ UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-18<br/>created_at: 2024-06-18 12:41:24<br/>updated_at: 2024-06-18 12:41:45<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:48:10', '2024-06-19 15:48:10', '2024-06-19 15:48:10'),
+(7, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 1<br/>nombre: CATEGORIA #1<br/>descripcion: DESC. CATEGORIA 1<br/>tipo: INGRESO<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:48:37<br/>updated_at: 2024-06-19 11:48:37<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:48:37', '2024-06-19 15:48:37', '2024-06-19 15:48:37'),
+(8, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 2<br/>nombre: CATEGORIA #2<br/>descripcion: <br/>tipo: EGRESO<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:48:45<br/>updated_at: 2024-06-19 11:48:45<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:48:45', '2024-06-19 15:48:45', '2024-06-19 15:48:45'),
+(9, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 3<br/>nombre: CATEGORIA 3<br/>descripcion: <br/>tipo: INGRESO<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:48:53<br/>updated_at: 2024-06-19 11:48:53<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:48:53', '2024-06-19 15:48:53', '2024-06-19 15:48:53'),
+(10, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 4<br/>nombre: CATEGORIA 4<br/>descripcion: <br/>tipo: EGRESO<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:48:59<br/>updated_at: 2024-06-19 11:48:59<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:48:59', '2024-06-19 15:48:59', '2024-06-19 15:48:59'),
+(11, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 1<br/>categoria_id: 1<br/>nombre: CONCEPTO #1<br/>descripcion: DESC. CONCEPTO 1<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:49:17<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:49:17', '2024-06-19 15:49:17', '2024-06-19 15:49:17'),
+(12, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>categoria_id: 1<br/>nombre: CONCEPTO #1<br/>descripcion: DESC. CONCEPTO 1<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:49:17<br/>', 'id: 1<br/>categoria_id: 2<br/>nombre: CONCEPTO #1ASD<br/>descripcion: DESC. CONCEPTO 1ASD<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:49:37<br/>', 'CATEGORIAS', '2024-06-19', '11:49:37', '2024-06-19 15:49:37', '2024-06-19 15:49:37'),
+(13, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>categoria_id: 2<br/>nombre: CONCEPTO #1ASD<br/>descripcion: DESC. CONCEPTO 1ASD<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:49:37<br/>', 'id: 1<br/>categoria_id: 1<br/>nombre: CONCEPTO #1<br/>descripcion: DESC. CONCEPTO 1<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:50:25<br/>', 'CATEGORIAS', '2024-06-19', '11:50:25', '2024-06-19 15:50:25', '2024-06-19 15:50:25'),
+(14, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:51:33<br/>updated_at: 2024-06-19 11:51:33<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:51:33', '2024-06-19 15:51:33', '2024-06-19 15:51:33'),
+(15, 1, 'ELIMINACIÓN', 'EL USUARIO  ELIMINÓ UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:51:33<br/>updated_at: 2024-06-19 11:51:33<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:51:45', '2024-06-19 15:51:45', '2024-06-19 15:51:45'),
+(16, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:52:01<br/>updated_at: 2024-06-19 11:52:01<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:52:01', '2024-06-19 15:52:01', '2024-06-19 15:52:01');
 
 -- --------------------------------------------------------
 
@@ -158,6 +181,7 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 
 CREATE TABLE `ingresos` (
   `id` bigint UNSIGNED NOT NULL,
+  `fecha` date NOT NULL,
   `categoria_id` bigint UNSIGNED NOT NULL,
   `fecha_registro` date DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -285,13 +309,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracions`
@@ -315,7 +339,7 @@ ALTER TABLE `egreso_detalles`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`

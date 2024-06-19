@@ -1,7 +1,8 @@
 <script setup>
 import { useForm, usePage } from "@inertiajs/vue3";
-import { useTipoSalidas } from "@/composables/tipo_salidas/useTipoSalidas";
-import { watch, ref, computed, defineEmits } from "vue";
+import { useConceptos } from "@/composables/conceptos/useConceptos";
+import { useCategorias } from "@/composables/categorias/useCategorias";
+import { watch, ref, computed, defineEmits, onMounted } from "vue";
 const props = defineProps({
     open_dialog: {
         type: Boolean,
@@ -13,16 +14,17 @@ const props = defineProps({
     },
 });
 
-const { oTipoSalida, limpiarTipoSalida } = useTipoSalidas();
+const { oConcepto, limpiarConcepto } = useConceptos();
+const { getCategorias } = useCategorias();
 const accion = ref(props.accion_dialog);
 const dialog = ref(props.open_dialog);
-let form = useForm(oTipoSalida.value);
+let form = useForm(oConcepto.value);
 watch(
     () => props.open_dialog,
     (newValue) => {
         dialog.value = newValue;
         if (dialog.value) {
-            form = useForm(oTipoSalida.value);
+            form = useForm(oConcepto.value);
         }
     }
 );
@@ -38,12 +40,13 @@ const { flash } = usePage().props;
 const tituloDialog = computed(() => {
     return accion.value == 0 ? `Agregar registro` : `Editar registro`;
 });
+const listCategorias = ref([]);
 
 const enviarFormulario = () => {
     let url =
         form["_method"] == "POST"
-            ? route("tipo_salidas.store")
-            : route("tipo_salidas.update", form.id);
+            ? route("conceptos.store")
+            : route("conceptos.update", form.id);
 
     form.post(url, {
         preserveScroll: true,
@@ -56,7 +59,7 @@ const enviarFormulario = () => {
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });
-            limpiarTipoSalida();
+            limpiarConcepto();
             emits("envio-formulario");
         },
         onError: (err) => {
@@ -88,6 +91,14 @@ watch(dialog, (newVal) => {
 const cerrarDialog = () => {
     dialog.value = false;
 };
+
+const cargaListas = async () => {
+    listCategorias.value = await getCategorias();
+};
+
+onMounted(() => {
+    cargaListas();
+});
 </script>
 
 <template>
@@ -111,6 +122,35 @@ const cerrarDialog = () => {
                         <form>
                             <v-row>
                                 <v-col cols="12" sm="6" md="6">
+                                    <v-select
+                                        :hide-details="
+                                            form.errors?.categoria_id
+                                                ? false
+                                                : true
+                                        "
+                                        :error="
+                                            form.errors?.categoria_id
+                                                ? true
+                                                : false
+                                        "
+                                        :error-messages="
+                                            form.errors?.categoria_id
+                                                ? form.errors?.categoria_id
+                                                : ''
+                                        "
+                                        density="compact"
+                                        variant="underlined"
+                                        color="primary"
+                                        clearable
+                                        :items="listCategorias"
+                                        item-value="id"
+                                        item-title="nombre"
+                                        label="Seleccionar Categoría*"
+                                        v-model="form.categoria_id"
+                                        required
+                                    ></v-select>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="6">
                                     <v-text-field
                                         :hide-details="
                                             form.errors?.nombre ? false : true
@@ -125,7 +165,7 @@ const cerrarDialog = () => {
                                         "
                                         variant="underlined"
                                         color="primary"
-                                        label="Nombre de Tipo de Salida*"
+                                        label="Nombre de Concepto*"
                                         required
                                         density="compact"
                                         v-model="form.nombre"

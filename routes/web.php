@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ConceptoController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
@@ -78,6 +80,20 @@ Route::middleware('auth')->group(function () {
     Route::get("/categorias/listado", [CategoriaController::class, 'listado'])->name("categorias.listado");
     Route::resource("categorias", CategoriaController::class)->only(
         ["index", "store", "update", "show", "destroy"]
+    );
+
+    // CONCEPTOS
+    Route::get("/conceptos/paginado", [ConceptoController::class, 'paginado'])->name("conceptos.paginado");
+    Route::get("/conceptos/listado", [ConceptoController::class, 'listado'])->name("conceptos.listado");
+    Route::resource("conceptos", ConceptoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // INGRESOS
+    Route::get("/ingresos/paginado", [IngresoController::class, 'paginado'])->name("ingresos.paginado");
+    Route::get("/ingresos/listado", [IngresoController::class, 'listado'])->name("ingresos.listado");
+    Route::resource("ingresos", IngresoController::class)->only(
+        ["index", "create", "store", "edit", "update", "show", "destroy"]
     );
 
     // REPORTES

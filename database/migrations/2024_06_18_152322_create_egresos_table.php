@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('egresos', function (Blueprint $table) {
             $table->id();
+            $table->date("fecha");
             $table->unsignedBigInteger("categoria_id");
             $table->date("fecha_registro")->nullable();
             $table->timestamps();

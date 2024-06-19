@@ -7,7 +7,7 @@ const breadbrums = [
         name_url: "inicio",
     },
     {
-        title: "Ingresos",
+        title: "Ingresos Económicos",
         disabled: false,
         url: "",
         name_url: "",
@@ -42,15 +42,11 @@ const headers = ref([
         sortable: false,
     },
     {
-        title: "Proveedor",
+        title: "Fecha",
         align: "start",
         sortable: false,
     },
-    { title: "Tipo de Ingreso", align: "start", sortable: false },
-    { title: "Precio", align: "start", sortable: false },
-    { title: "Nro. Factura", align: "start", sortable: false },
-    { title: "Descripción", align: "start", sortable: false },
-    { title: "Fecha de Ingreso", align: "start", sortable: false },
+    { title: "Categoría", align: "start", sortable: false },
     { title: "Fecha de Registro", align: "start", sortable: false },
     { title: "Más", align: "start", sortable: false },
     { title: "Acción", align: "end", sortable: false },
@@ -131,7 +127,7 @@ const eliminarIngreso = (item) => {
 const verUbicación = async (item) => {};
 </script>
 <template>
-    <Head title="Ingresos"></Head>
+    <Head title="Ingresos Económicos"></Head>
     <v-container>
         <BreadBrums :breadbrums="breadbrums"></BreadBrums>
         <v-row class="mt-0">
@@ -151,7 +147,7 @@ const verUbicación = async (item) => {};
                 <v-card flat>
                     <v-card-title>
                         <v-row class="bg-primary d-flex align-center pa-3">
-                            <v-col cols="12" sm="6" md="4"> Ingresos </v-col>
+                            <v-col cols="12" sm="6" md="4"> Ingresos Económicos</v-col>
                             <v-col cols="12" sm="6" md="4" offset-md="4">
                                 <v-text-field
                                     v-model="search"
@@ -195,13 +191,9 @@ const verUbicación = async (item) => {};
                                     <tr>
                                         <td>{{ item.id }}</td>
                                         <td>
-                                            {{ item.proveedor.razon_social }}
+                                            {{ item.fecha_t }}
                                         </td>
-                                        <td>{{ item.tipo_ingreso.nombre }}</td>
-                                        <td>{{ item.precio }}</td>
-                                        <td>{{ item.nro_factura }}</td>
-                                        <td>{{ item.descripcion }}</td>
-                                        <td>{{ item.fecha_ingreso_t }}</td>
+                                        <td>{{ item.categoria.nombre }}</td>
                                         <td>{{ item.fecha_registro_t }}</td>
                                         <td>
                                             <v-btn
@@ -328,50 +320,23 @@ const verUbicación = async (item) => {};
                                                 </li>
                                                 <li
                                                     class="flex-item"
-                                                    data-label="Proveedor:"
+                                                    data-label="Fecha:"
                                                 >
                                                     {{
-                                                        item.proveedor
-                                                            .razon_social
+                                                        item.fecha_t
                                                     }}
                                                 </li>
                                                 <li
                                                     class="flex-item"
-                                                    data-label="Tipo de Ingreso:"
+                                                    data-label="Categoría:"
                                                 >
-                                                    {{
-                                                        item.tipo_ingreso.nombre
-                                                    }}
-                                                </li>
-                                                <li
-                                                    class="flex-item"
-                                                    data-label="Precio:"
-                                                >
-                                                    {{ item.precio }}
-                                                </li>
-                                                <li
-                                                    class="flex-item"
-                                                    data-label="Nro. Factura:"
-                                                >
-                                                    {{ item.nro_factura }}
-                                                </li>
-                                                <li
-                                                    class="flex-item"
-                                                    data-label="Descripción:"
-                                                >
-                                                    {{ item.descripcion }}
+                                                    {{ item.categoria.nombre }}
                                                 </li>
                                                 <li
                                                     class="flex-item"
                                                     data-label="Fecha de Ingreso:"
                                                 >
                                                     {{ item.fecha_ingreso_t }}
-                                                </li>
-                                                <li
-                                                    class="flex-item"
-                                                    data-label="Fecha de Registro"
-                                                >
-                                                    {{ item.fecha_registro_t }}
                                                 </li>
                                                 <li
                                                     class="flex-item"

@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Concepto;
+use App\Models\Egreso;
 use App\Models\HistorialAccion;
+use App\Models\Ingreso;
+use App\Models\IngresoDetalle;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -122,7 +126,19 @@ class CategoriaController extends Controller
     {
         DB::beginTransaction();
         try {
-            $usos = Producto::where("categoria_id", $categoria->id)->get();
+            $usos = Concepto::where("categoria_id", $categoria->id)->get();
+            if (count($usos) > 0) {
+                throw ValidationException::withMessages([
+                    'error' =>  "No es posible eliminar esta categoría porque esta siendo utilizada por otros registros",
+                ]);
+            }
+            $usos = Ingreso::where("categoria_id", $categoria->id)->get();
+            if (count($usos) > 0) {
+                throw ValidationException::withMessages([
+                    'error' =>  "No es posible eliminar esta categoría porque esta siendo utilizada por otros registros",
+                ]);
+            }
+            $usos = Egreso::where("categoria_id", $categoria->id)->get();
             if (count($usos) > 0) {
                 throw ValidationException::withMessages([
                     'error' =>  "No es posible eliminar esta categoría porque esta siendo utilizada por otros registros",

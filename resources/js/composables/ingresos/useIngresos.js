@@ -5,12 +5,8 @@ import { usePage } from "@inertiajs/vue3";
 
 const oIngreso = reactive({
     id: 0,
-    proveedor_id: null,
-    tipo_ingreso_id: null,
-    precio: "",
-    nro_factura: "",
-    descripcion: "",
-    fecha_ingreso: "",
+    fecha: "",
+    categoria_id: null,
     ingreso_detalles: reactive([]),
     eliminados: reactive([]),
     _method: "POST",
@@ -135,19 +131,8 @@ export const useIngresos = () => {
     ) => {
         if (item) {
             oIngreso.id = item.id;
-            oIngreso.proveedor_id = item.proveedor_id;
-            if (proveedor) {
-                oIngreso.proveedor = item.proveedor;
-                oIngreso.fecha_ingreso_t = item.fecha_ingreso_t;
-            }
-            oIngreso.tipo_ingreso_id = item.tipo_ingreso_id;
-            if (tipo_ingreso) {
-                oIngreso.tipo_ingreso = item.tipo_ingreso;
-            }
-            oIngreso.precio = item.precio;
-            oIngreso.nro_factura = item.nro_factura;
-            oIngreso.descripcion = item.descripcion;
-            oIngreso.fecha_ingreso = item.fecha_ingreso;
+            oIngreso.fecha = item.fecha;
+            oIngreso.categoria_id = item.categoria_id;
             oIngreso.ingreso_detalles = reactive([...item.ingreso_detalles]);
             oIngreso.eliminados = reactive([]);
             oIngreso._method = "PUT";
@@ -158,12 +143,8 @@ export const useIngresos = () => {
 
     const limpiarIngreso = () => {
         oIngreso.id = 0;
-        oIngreso.proveedor_id = null;
-        oIngreso.tipo_ingreso_id = null;
-        oIngreso.precio = "";
-        oIngreso.nro_factura = "";
-        oIngreso.descripcion = "";
-        oIngreso.fecha_ingreso = "";
+        oIngreso.fecha = "";
+        oIngreso.categoria_id = null;
         oIngreso.ingreso_detalles = reactive([]);
         oIngreso.eliminados = reactive([]);
         oIngreso._method = "POST";

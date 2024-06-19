@@ -1,9 +1,7 @@
 <script setup>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { useIngresos } from "@/composables/ingresos/useIngresos";
-import { useProveedors } from "@/composables/proveedors/useProveedors";
-import { useTipoIngresos } from "@/composables/tipo_ingresos/useTipoIngresos";
-import { useProductos } from "@/composables/productos/useProductos";
+import { useCategorias } from "@/composables/categorias/useCategorias";
 import { useMenu } from "@/composables/useMenu";
 import { watch, ref, reactive, computed, onMounted } from "vue";
 
@@ -13,14 +11,11 @@ let form = useForm(oIngreso);
 
 const { flash, auth } = usePage().props;
 const user = ref(auth.user);
-const { getProveedors } = useProveedors();
-const { getTipoIngresos } = useTipoIngresos();
-const { getProductos } = useProductos();
+const { getCategorias } = useCategorias();
 
-const listProveedors = ref([]);
-const listTipoIngresos = ref([]);
-const listProductos = ref([]);
-const producto_id = ref(null);
+const listCategorias = ref([]);
+const listConceptos = ref([]);
+const concepto_id = ref(null);
 const cantidad = ref(0);
 const tituloDialog = computed(() => {
     return oIngreso.id == 0 ? `Registrar Ingreso` : `Editar Ingreso`;
@@ -65,22 +60,20 @@ const enviarFormulario = () => {
 };
 
 const cargarListas = async () => {
-    listProveedors.value = await getProveedors();
-    listTipoIngresos.value = await getTipoIngresos();
-    listProductos.value = await getProductos();
+    listCategorias.value = await getCategorias();
 };
 
 const agregarIngresoDetalle = () => {
-    if (producto_id.value != "" && cantidad.value != "" && cantidad.value > 0) {
+    if (concepto_id.value != "" && cantidad.value != "" && cantidad.value > 0) {
         form.ingreso_detalles.push({
             id: 0,
             ingreso_id: 0,
-            producto_id: producto_id.value,
-            producto: getProducto(producto_id.value),
+            concepto_id: concepto_id.value,
+            producto: getProducto(concepto_id.value),
             cantidad: cantidad.value,
         });
 
-        producto_id.value = null;
+        concepto_id.value = null;
         cantidad.value = 0;
     } else {
         Swal.fire({
@@ -101,7 +94,7 @@ const quitarIngresoDetalle = (index, id) => {
 };
 
 const getProducto = (id) => {
-    let producto = listProductos.value.filter((elem) => elem.id == id)[0];
+    let producto = listConceptos.value.filter((elem) => elem.id == id)[0];
     return producto;
 };
 
@@ -170,18 +163,18 @@ onMounted(() => {
                                 <v-col cols="12" sm="12" md="12" xl="6">
                                     <v-autocomplete
                                         :hide-details="
-                                            form.errors?.proveedor_id
+                                            form.errors?.categoria_id
                                                 ? false
                                                 : true
                                         "
                                         :error="
-                                            form.errors?.proveedor_id
+                                            form.errors?.categoria_id
                                                 ? true
                                                 : false
                                         "
                                         :error-messages="
-                                            form.errors?.proveedor_id
-                                                ? form.errors?.proveedor_id
+                                            form.errors?.categoria_id
+                                                ? form.errors?.categoria_id
                                                 : ''
                                         "
                                         density="compact"
@@ -189,142 +182,34 @@ onMounted(() => {
                                         color="primary"
                                         no-data-text="Sin registros"
                                         clearable
-                                        :items="listProveedors"
-                                        item-value="id"
-                                        item-title="razon_social"
-                                        label="Seleccionar proveedor*"
-                                        v-model="form.proveedor_id"
-                                        required
-                                    ></v-autocomplete>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="12" xl="6">
-                                    <v-autocomplete
-                                        :hide-details="
-                                            form.errors?.tipo_ingreso_id
-                                                ? false
-                                                : true
-                                        "
-                                        :error="
-                                            form.errors?.tipo_ingreso_id
-                                                ? true
-                                                : false
-                                        "
-                                        :error-messages="
-                                            form.errors?.tipo_ingreso_id
-                                                ? form.errors?.tipo_ingreso_id
-                                                : ''
-                                        "
-                                        density="compact"
-                                        variant="underlined"
-                                        color="primary"
-                                        no-data-text="Sin registros"
-                                        clearable
-                                        :items="listTipoIngresos"
+                                        :items="listCategorias"
                                         item-value="id"
                                         item-title="nombre"
-                                        label="Seleccionar Tipo de Ingreso*"
-                                        v-model="form.tipo_ingreso_id"
+                                        label="Seleccionar categoría*"
+                                        v-model="form.categoria_id"
                                         required
                                     ></v-autocomplete>
                                 </v-col>
                                 <v-col cols="12" sm="12" md="12" xl="6">
                                     <v-text-field
                                         :hide-details="
-                                            form.errors?.precio ? false : true
+                                            form.errors?.fecha ? false : true
                                         "
                                         :error="
-                                            form.errors?.precio ? true : false
+                                            form.errors?.fecha ? true : false
                                         "
                                         :error-messages="
-                                            form.errors?.precio
-                                                ? form.errors?.precio
+                                            form.errors?.fecha
+                                                ? form.errors?.fecha
                                                 : ''
                                         "
                                         density="compact"
                                         variant="underlined"
                                         color="primary"
-                                        label="Precio"
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        required
-                                        v-model="form.precio"
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="12" xl="6">
-                                    <v-text-field
-                                        :hide-details="
-                                            form.errors?.nro_factura
-                                                ? false
-                                                : true
-                                        "
-                                        :error="
-                                            form.errors?.nro_factura
-                                                ? true
-                                                : false
-                                        "
-                                        :error-messages="
-                                            form.errors?.nro_factura
-                                                ? form.errors?.nro_factura
-                                                : ''
-                                        "
-                                        density="compact"
-                                        variant="underlined"
-                                        color="primary"
-                                        label="Número de factura*"
-                                        required
-                                        v-model="form.nro_factura"
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="12" xl="6">
-                                    <v-text-field
-                                        :hide-details="
-                                            form.errors?.descripcion
-                                                ? false
-                                                : true
-                                        "
-                                        :error="
-                                            form.errors?.descripcion
-                                                ? true
-                                                : false
-                                        "
-                                        :error-messages="
-                                            form.errors?.descripcion
-                                                ? form.errors?.descripcion
-                                                : ''
-                                        "
-                                        density="compact"
-                                        variant="underlined"
-                                        color="primary"
-                                        label="Descripción"
-                                        required
-                                        v-model="form.descripcion"
-                                    ></v-text-field>
-                                </v-col>
-                                <v-col cols="12" sm="12" md="12" xl="6">
-                                    <v-text-field
-                                        :hide-details="
-                                            form.errors?.fecha_ingreso
-                                                ? false
-                                                : true
-                                        "
-                                        :error="
-                                            form.errors?.fecha_ingreso
-                                                ? true
-                                                : false
-                                        "
-                                        :error-messages="
-                                            form.errors?.fecha_ingreso
-                                                ? form.errors?.fecha_ingreso
-                                                : ''
-                                        "
-                                        density="compact"
-                                        variant="underlined"
-                                        color="primary"
+                                        label="Fecha"
                                         type="date"
-                                        label="Fecha de Ingreso*"
                                         required
-                                        v-model="form.fecha_ingreso"
+                                        v-model="form.fecha"
                                     ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -336,7 +221,7 @@ onMounted(() => {
         <v-col cols="12" sm="12" md="6" xl="6">
             <v-card>
                 <v-card-title class="bg-primary pa-5">
-                    <span class="text-h5">Seleccionar Productos</span>
+                    <span class="text-h5">Seleccionar Conceptos</span>
                 </v-card-title>
                 <v-card-text>
                     <v-row class="py-3">
@@ -348,11 +233,11 @@ onMounted(() => {
                                 color="primary"
                                 no-data-text="Sin registros"
                                 clearable
-                                :items="listProductos"
+                                :items="listConceptos"
                                 item-value="id"
                                 item-title="nombre"
                                 label="Seleccionar Producto"
-                                v-model="producto_id"
+                                v-model="concepto_id"
                                 required
                             ></v-autocomplete>
                         </v-col>
@@ -377,12 +262,12 @@ onMounted(() => {
                                 class="mt-2"
                                 block
                                 :disabled="
-                                    !producto_id || !cantidad || cantidad < 0.01
+                                    !concepto_id || !cantidad || cantidad < 0.01
                                 "
                                 @click="agregarIngresoDetalle"
                                 >Agregar</v-btn
                             >
-                            <span class="text-caption" v-if="!producto_id"
+                            <span class="text-caption" v-if="!concepto_id"
                                 >Debes seleccionar un producto</span
                             >
                             <span

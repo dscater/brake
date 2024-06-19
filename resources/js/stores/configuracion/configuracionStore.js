@@ -3,14 +3,14 @@ import { defineStore } from "pinia";
 export const useConfiguracionStore = defineStore("configuracion", {
     state: () => ({
         oConfiguracion: {
-            nombre_sistema: "SISOBRAS",
+            nombre_sistema: "BRAKE",
             alias: "SO",
-            razon_social: "SISOBRAS S.A.",
+            razon_social: "BRAKE S.A.",
             nit: "111111",
             ciudad: "LA PAZ",
             dir: "LOS OLIVOS",
             fono: "777777",
-            correo: "SISOBRAS@GMAIL.COM",
+            correo: "BRAKE@GMAIL.COM",
             web: "",
             actividad: "ACTIVIDAD",
             logo: "logo.jpg",
