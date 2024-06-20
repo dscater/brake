@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ConceptoController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\EgresoController;
 use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProfileController;
@@ -84,6 +85,7 @@ Route::middleware('auth')->group(function () {
 
     // CONCEPTOS
     Route::get("/conceptos/paginado", [ConceptoController::class, 'paginado'])->name("conceptos.paginado");
+    Route::get("/conceptos/byCategoria", [ConceptoController::class, 'byCategoria'])->name("conceptos.byCategoria");
     Route::get("/conceptos/listado", [ConceptoController::class, 'listado'])->name("conceptos.listado");
     Route::resource("conceptos", ConceptoController::class)->only(
         ["index", "store", "update", "show", "destroy"]
@@ -93,6 +95,13 @@ Route::middleware('auth')->group(function () {
     Route::get("/ingresos/paginado", [IngresoController::class, 'paginado'])->name("ingresos.paginado");
     Route::get("/ingresos/listado", [IngresoController::class, 'listado'])->name("ingresos.listado");
     Route::resource("ingresos", IngresoController::class)->only(
+        ["index", "create", "store", "edit", "update", "show", "destroy"]
+    );
+
+    // EGRESOS
+    Route::get("/egresos/paginado", [EgresoController::class, 'paginado'])->name("egresos.paginado");
+    Route::get("/egresos/listado", [EgresoController::class, 'listado'])->name("egresos.listado");
+    Route::resource("egresos", EgresoController::class)->only(
         ["index", "create", "store", "edit", "update", "show", "destroy"]
     );
 

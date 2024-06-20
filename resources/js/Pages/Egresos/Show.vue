@@ -7,10 +7,10 @@ const breadbrums = [
         name_url: "inicio",
     },
     {
-        title: "Ingresos",
+        title: "Egresos",
         disabled: false,
-        url: route("ingresos.index"),
-        name_url: "ingresos.index",
+        url: route("egresos.index"),
+        name_url: "egresos.index",
     },
     {
         title: "Ver",
@@ -26,19 +26,19 @@ import { useApp } from "@/composables/useApp";
 import { Head } from "@inertiajs/vue3";
 import { onMounted } from "vue";
 import { useMenu } from "@/composables/useMenu";
-import { useIngresos } from "@/composables/ingresos/useIngresos";
+import { useEgresos } from "@/composables/egresos/useEgresos";
 import Formulario from "./parcials/Formulario.vue";
 const { mobile, identificaDispositivo, cambiarUrl } = useMenu();
 
 const { setLoading } = useApp();
-const { oIngreso, setIngreso } = useIngresos();
+const { oEgreso, setEgreso } = useEgresos();
 
 const props = defineProps({
-    ingreso: {
+    egreso: {
         type: Object,
     },
 });
-setIngreso(props.ingreso, true, true);
+setEgreso(props.egreso, true, true);
 
 onMounted(() => {
     setTimeout(() => {
@@ -47,7 +47,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head title="Ingresos"></Head>
+    <Head title="Egresos"></Head>
     <v-container>
         <BreadBrums :breadbrums="breadbrums"></BreadBrums>
 
@@ -56,15 +56,15 @@ onMounted(() => {
                 <v-card>
                     <v-card-text>
                         <h4 class="text-h5 font-weight-bold mb-3">
-                            Información Ingreso Económico
+                            Información Egreso Económico
                         </h4>
                         <p class="mb-2">
                             <strong>Categoría: </strong>
-                            {{ oIngreso.categoria?.nombre }}
+                            {{ oEgreso.categoria?.nombre }}
                         </p>
                         <p class="mb-2">
                             <strong>Fecha: </strong>
-                            {{ oIngreso.fecha_t }}
+                            {{ oEgreso.fecha_t }}
                         </p>
 
                         <v-table class="border">
@@ -81,7 +81,7 @@ onMounted(() => {
                                 <tr
                                     v-for="(
                                         item_detalle, index
-                                    ) in oIngreso.ingreso_detalles"
+                                    ) in oEgreso.egreso_detalles"
                                 >
                                     <td>
                                         {{ index + 1 }}
@@ -110,10 +110,10 @@ onMounted(() => {
                                         TOTAL
                                     </th>
                                     <th class="text-center font-weight-bold">
-                                        {{ oIngreso.total_c }}
+                                        {{ oEgreso.total_c }}
                                     </th>
                                     <th class="text-center font-weight-bold">
-                                        {{ oIngreso.total_m }}
+                                        {{ oEgreso.total_m }}
                                     </th>
                                     <th></th>
                                 </tr>
@@ -123,7 +123,7 @@ onMounted(() => {
                         <v-btn
                             prepend-icon="mdi-arrow-left"
                             class="mr-2 mt-3"
-                            @click="cambiarUrl(route('ingresos.index'))"
+                            @click="cambiarUrl(route('egresos.index'))"
                         >
                             Volver</v-btn
                         >

@@ -10,11 +10,17 @@ class IngresoDetalle extends Model
     use HasFactory;
 
     protected $fillable = [
+        "ingreso_id",
         "concepto_id",
         "descripcion",
         "cantidad",
         "monto",
     ];
+
+    public function ingreso()
+    {
+        return $this->belongsTo(Ingreso::class, 'ingreso_id');
+    }
 
     public function concepto()
     {

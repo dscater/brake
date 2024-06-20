@@ -35,6 +35,10 @@ class CategoriaController extends Controller
     {
         $categorias = Categoria::select("categorias.*");
 
+        if (isset($request->byTipo) && $request->byTipo) {
+            $categorias->where("tipo", $request->byTipo);
+        }
+
         if ($request->order && $request->order == "desc") {
             $categorias->orderBy("categorias.id", $request->order);
         }

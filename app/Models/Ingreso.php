@@ -15,7 +15,18 @@ class Ingreso extends Model
         "fecha_registro",
     ];
 
-    protected $appends = ["fecha_t", "fecha_registro_t"];
+    protected $appends = ["fecha_t", "fecha_registro_t", "total_c", "total_m"];
+
+    public function getTotalCAttribute()
+    {
+        $total = IngresoDetalle::where("ingreso_id", $this->id)->sum("cantidad");
+        return $total;
+    }
+    public function getTotalMAttribute()
+    {
+        $total = IngresoDetalle::where("ingreso_id", $this->id)->sum("monto");
+        return $total;
+    }
 
     public function getFechaTAttribute()
     {

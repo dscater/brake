@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 19-06-2024 a las 16:37:13
+-- Tiempo de generación: 20-06-2024 a las 15:56:04
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -115,6 +115,13 @@ CREATE TABLE `egresos` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `egresos`
+--
+
+INSERT INTO `egresos` (`id`, `fecha`, `categoria_id`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(1, '2024-06-20', 2, '2024-06-20', '2024-06-20 15:55:26', '2024-06-20 15:55:26');
+
 -- --------------------------------------------------------
 
 --
@@ -123,6 +130,7 @@ CREATE TABLE `egresos` (
 
 CREATE TABLE `egreso_detalles` (
   `id` bigint UNSIGNED NOT NULL,
+  `egreso_id` bigint UNSIGNED NOT NULL,
   `concepto_id` bigint UNSIGNED NOT NULL,
   `descripcion` varchar(600) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cantidad` double(8,2) NOT NULL,
@@ -130,6 +138,13 @@ CREATE TABLE `egreso_detalles` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `egreso_detalles`
+--
+
+INSERT INTO `egreso_detalles` (`id`, `egreso_id`, `concepto_id`, `descripcion`, `cantidad`, `monto`, `created_at`, `updated_at`) VALUES
+(1, 1, 2, 'DESC EGRESO', 23.00, 1200.00, '2024-06-20 15:55:26', '2024-06-20 15:55:26');
 
 -- --------------------------------------------------------
 
@@ -171,7 +186,12 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (13, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UNA CATEGORIA', 'id: 1<br/>categoria_id: 2<br/>nombre: CONCEPTO #1ASD<br/>descripcion: DESC. CONCEPTO 1ASD<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:49:37<br/>', 'id: 1<br/>categoria_id: 1<br/>nombre: CONCEPTO #1<br/>descripcion: DESC. CONCEPTO 1<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:49:17<br/>updated_at: 2024-06-19 11:50:25<br/>', 'CATEGORIAS', '2024-06-19', '11:50:25', '2024-06-19 15:50:25', '2024-06-19 15:50:25'),
 (14, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:51:33<br/>updated_at: 2024-06-19 11:51:33<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:51:33', '2024-06-19 15:51:33', '2024-06-19 15:51:33'),
 (15, 1, 'ELIMINACIÓN', 'EL USUARIO  ELIMINÓ UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:51:33<br/>updated_at: 2024-06-19 11:51:33<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:51:45', '2024-06-19 15:51:45', '2024-06-19 15:51:45'),
-(16, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:52:01<br/>updated_at: 2024-06-19 11:52:01<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:52:01', '2024-06-19 15:52:01', '2024-06-19 15:52:01');
+(16, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UNA CATEGORIA', 'id: 2<br/>categoria_id: 2<br/>nombre: CONCEPTO #2<br/>descripcion: DESC CONCEPTO 2<br/>fecha_registro: 2024-06-19<br/>created_at: 2024-06-19 11:52:01<br/>updated_at: 2024-06-19 11:52:01<br/>', NULL, 'CATEGORIAS', '2024-06-19', '11:52:01', '2024-06-19 15:52:01', '2024-06-19 15:52:01'),
+(17, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN INGRESO ECONÓMICO', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', NULL, 'INGRESO ECONÓMICOS', '2024-06-20', '11:18:24', '2024-06-20 15:18:24', '2024-06-20 15:18:24'),
+(18, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UN INGRESO ECONÓMICO', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', 'INGRESO ECONÓMICOS', '2024-06-20', '11:28:22', '2024-06-20 15:28:22', '2024-06-20 15:28:22'),
+(19, 1, 'ELIMINACIÓN', 'EL USUARIO  ELIMINÓ UN INGRESO ECONÓMICO', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', NULL, 'INGRESO ECONÓMICOS', '2024-06-20', '11:28:54', '2024-06-20 15:28:54', '2024-06-20 15:28:54'),
+(20, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN INGRESO ECONÓMICO', 'id: 1<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:29:23<br/>updated_at: 2024-06-20 11:29:23<br/>', NULL, 'INGRESO ECONÓMICOS', '2024-06-20', '11:29:23', '2024-06-20 15:29:23', '2024-06-20 15:29:23'),
+(21, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN EGRESO ECONÓMICO', 'id: 1<br/>fecha: 2024-06-20<br/>categoria_id: 2<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:55:26<br/>updated_at: 2024-06-20 11:55:26<br/>', NULL, 'EGRESO ECONÓMICOS', '2024-06-20', '11:55:26', '2024-06-20 15:55:26', '2024-06-20 15:55:26');
 
 -- --------------------------------------------------------
 
@@ -188,6 +208,13 @@ CREATE TABLE `ingresos` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Volcado de datos para la tabla `ingresos`
+--
+
+INSERT INTO `ingresos` (`id`, `fecha`, `categoria_id`, `fecha_registro`, `created_at`, `updated_at`) VALUES
+(1, '2024-06-20', 1, '2024-06-20', '2024-06-20 15:29:23', '2024-06-20 15:29:23');
+
 -- --------------------------------------------------------
 
 --
@@ -196,6 +223,7 @@ CREATE TABLE `ingresos` (
 
 CREATE TABLE `ingreso_detalles` (
   `id` bigint UNSIGNED NOT NULL,
+  `ingreso_id` bigint UNSIGNED NOT NULL,
   `concepto_id` bigint UNSIGNED NOT NULL,
   `descripcion` varchar(600) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cantidad` double(8,2) NOT NULL,
@@ -203,6 +231,13 @@ CREATE TABLE `ingreso_detalles` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `ingreso_detalles`
+--
+
+INSERT INTO `ingreso_detalles` (`id`, `ingreso_id`, `concepto_id`, `descripcion`, `cantidad`, `monto`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'DESC. DETALLE', 100.00, 100000.00, '2024-06-20 15:29:23', '2024-06-20 15:29:23');
 
 -- --------------------------------------------------------
 
@@ -272,7 +307,8 @@ ALTER TABLE `egresos`
 --
 ALTER TABLE `egreso_detalles`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `egreso_detalles_concepto_id_foreign` (`concepto_id`);
+  ADD KEY `egreso_detalles_concepto_id_foreign` (`concepto_id`),
+  ADD KEY `egreso_id` (`egreso_id`);
 
 --
 -- Indices de la tabla `historial_accions`
@@ -292,7 +328,8 @@ ALTER TABLE `ingresos`
 --
 ALTER TABLE `ingreso_detalles`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `ingreso_detalles_concepto_id_foreign` (`concepto_id`);
+  ADD KEY `ingreso_detalles_concepto_id_foreign` (`concepto_id`),
+  ADD KEY `ingreso_id` (`ingreso_id`);
 
 --
 -- Indices de la tabla `users`
@@ -327,31 +364,31 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `egresos`
 --
 ALTER TABLE `egresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `egreso_detalles`
 --
 ALTER TABLE `egreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
 --
 ALTER TABLE `ingresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
@@ -379,7 +416,8 @@ ALTER TABLE `egresos`
 -- Filtros para la tabla `egreso_detalles`
 --
 ALTER TABLE `egreso_detalles`
-  ADD CONSTRAINT `egreso_detalles_concepto_id_foreign` FOREIGN KEY (`concepto_id`) REFERENCES `conceptos` (`id`);
+  ADD CONSTRAINT `egreso_detalles_concepto_id_foreign` FOREIGN KEY (`concepto_id`) REFERENCES `conceptos` (`id`),
+  ADD CONSTRAINT `egreso_detalles_ibfk_1` FOREIGN KEY (`egreso_id`) REFERENCES `egresos` (`id`);
 
 --
 -- Filtros para la tabla `ingresos`
@@ -391,7 +429,8 @@ ALTER TABLE `ingresos`
 -- Filtros para la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  ADD CONSTRAINT `ingreso_detalles_concepto_id_foreign` FOREIGN KEY (`concepto_id`) REFERENCES `conceptos` (`id`);
+  ADD CONSTRAINT `ingreso_detalles_concepto_id_foreign` FOREIGN KEY (`concepto_id`) REFERENCES `conceptos` (`id`),
+  ADD CONSTRAINT `ingreso_detalles_ibfk_1` FOREIGN KEY (`ingreso_id`) REFERENCES `ingresos` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

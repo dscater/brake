@@ -1,13 +1,13 @@
 <script setup>
 import { useForm, usePage } from "@inertiajs/vue3";
-import { useIngresos } from "@/composables/ingresos/useIngresos";
+import { useEgresos } from "@/composables/egresos/useEgresos";
 import { useCategorias } from "@/composables/categorias/useCategorias";
 import { useMenu } from "@/composables/useMenu";
 import { watch, ref, reactive, computed, onMounted } from "vue";
 
 const { mobile, cambiarUrl } = useMenu();
-const { oIngreso, limpiarIngreso } = useIngresos();
-let form = useForm(oIngreso);
+const { oEgreso, limpiarEgreso } = useEgresos();
+let form = useForm(oEgreso);
 
 const { flash, auth } = usePage().props;
 const user = ref(auth.user);
@@ -20,14 +20,14 @@ const descripcion = ref("");
 const cantidad = ref(0);
 const monto = ref(0);
 const tituloDialog = computed(() => {
-    return oIngreso.id == 0 ? `Registrar Ingreso` : `Editar Ingreso`;
+    return oEgreso.id == 0 ? `Registrar Egreso` : `Editar Egreso`;
 });
 
 const enviarFormulario = () => {
     let url =
         form["_method"] == "POST"
-            ? route("ingresos.store")
-            : route("ingresos.update", form.id);
+            ? route("egresos.store")
+            : route("egresos.update", form.id);
 
     form.post(url, {
         preserveScroll: true,
@@ -40,8 +40,8 @@ const enviarFormulario = () => {
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });
-            limpiarIngreso();
-            cambiarUrl(route("ingresos.index"));
+            limpiarEgreso();
+            cambiarUrl(route("egresos.index"));
         },
         onError: (err) => {
             Swal.fire({
@@ -63,7 +63,7 @@ const enviarFormulario = () => {
 
 const cargarListas = async () => {
     listCategorias.value = await getCategorias({
-        byTipo: "INGRESO",
+        byTipo: "EGRESO",
     });
 };
 
@@ -83,11 +83,11 @@ const getConceptos = (categoria_id) => {
 };
 
 const calcula_totales = () => {
-    let total_cantidad = form.ingreso_detalles.reduce(
+    let total_cantidad = form.egreso_detalles.reduce(
         (acumulador, item) => acumulador + parseFloat(item.cantidad),
         0
     );
-    let total_monto = form.ingreso_detalles.reduce(
+    let total_monto = form.egreso_detalles.reduce(
         (acumulador, item) => acumulador + parseFloat(item.monto),
         0
     );
@@ -95,7 +95,7 @@ const calcula_totales = () => {
     form.total_m = total_monto;
 };
 
-const agregarIngresoDetalle = () => {
+const agregarEgresoDetalle = () => {
     if (
         concepto_id.value != "" &&
         cantidad.value != "" &&
@@ -103,9 +103,9 @@ const agregarIngresoDetalle = () => {
         monto.value != "" &&
         monto.value > 0
     ) {
-        form.ingreso_detalles.push({
+        form.egreso_detalles.push({
             id: 0,
-            ingreso_id: 0,
+            egreso_id: 0,
             concepto_id: concepto_id.value,
             concepto: getConcepto(concepto_id.value),
             descripcion: descripcion.value,
@@ -130,11 +130,11 @@ const agregarIngresoDetalle = () => {
     }
 };
 
-const quitarIngresoDetalle = (index, id) => {
+const quitarEgresoDetalle = (index, id) => {
     if (id != 0) {
         form.eliminados.push(id);
     }
-    form.ingreso_detalles.splice(index, 1);
+    form.egreso_detalles.splice(index, 1);
     calcula_totales();
     1;
 };
@@ -160,7 +160,7 @@ onMounted(() => {
                 <v-btn
                     icon="mdi-arrow-left"
                     class="mr-2"
-                    @click="cambiarUrl(route('ingresos.index'))"
+                    @click="cambiarUrl(route('egresos.index'))"
                 ></v-btn>
                 <v-btn
                     icon="mdi-content-save"
@@ -172,22 +172,22 @@ onMounted(() => {
                 <v-btn
                     prepend-icon="mdi-arrow-left"
                     class="mr-2"
-                    @click="cambiarUrl(route('ingresos.index'))"
+                    @click="cambiarUrl(route('egresos.index'))"
                 >
                     Volver</v-btn
                 >
                 <v-btn
                     :prepend-icon="
-                        oIngreso.id != 0 ? 'mdi-sync' : 'mdi-content-save'
+                        oEgreso.id != 0 ? 'mdi-sync' : 'mdi-content-save'
                     "
                     color="primary"
                     @click="enviarFormulario"
                 >
                     <span
                         v-text="
-                            oIngreso.id != 0
-                                ? 'Actualizar Ingreso'
-                                : 'Guardar Ingreso'
+                            oEgreso.id != 0
+                                ? 'Actualizar Egreso'
+                                : 'Guardar Egreso'
                         "
                     ></span
                 ></v-btn>
@@ -352,7 +352,7 @@ onMounted(() => {
                                 :disabled="
                                     !concepto_id || !cantidad || cantidad < 0.01
                                 "
-                                @click="agregarIngresoDetalle"
+                                @click="agregarEgresoDetalle"
                                 >Agregar</v-btn
                             >
                             <v-table>
@@ -370,7 +370,7 @@ onMounted(() => {
                                     <tr
                                         v-for="(
                                             item, index
-                                        ) in form.ingreso_detalles"
+                                        ) in form.egreso_detalles"
                                     >
                                         <td>{{ index + 1 }}</td>
                                         <td>{{ item.concepto.nombre }}</td>
@@ -387,7 +387,7 @@ onMounted(() => {
                                                 icon="mdi-trash-can"
                                                 color="red-darken-3"
                                                 @click="
-                                                    quitarIngresoDetalle(
+                                                    quitarEgresoDetalle(
                                                         index,
                                                         item.id
                                                     )

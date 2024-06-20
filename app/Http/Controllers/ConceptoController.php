@@ -45,6 +45,13 @@ class ConceptoController extends Controller
         ]);
     }
 
+    public function byCategoria(Request $request)
+    {
+        $categoria_id = $request->categoria_id;
+        $conceptos = Concepto::where("categoria_id", $categoria_id)->get();
+        return response()->JSON($conceptos);
+    }
+
     public function paginado(Request $request)
     {
         $search = $request->search;

@@ -9,6 +9,8 @@ const oIngreso = reactive({
     categoria_id: null,
     ingreso_detalles: reactive([]),
     eliminados: reactive([]),
+    total_c: 0,
+    total_m: 0,
     _method: "POST",
 });
 
@@ -124,15 +126,20 @@ export const useIngresos = () => {
         }
     };
 
-    const setIngreso = (
-        item = null,
-        proveedor = false,
-        tipo_ingreso = false
-    ) => {
+    const setIngreso = (item = null, concepto = false, categoria = false) => {
         if (item) {
             oIngreso.id = item.id;
             oIngreso.fecha = item.fecha;
+            oIngreso.fecha_t = item.fecha_t;
+            oIngreso.total_c = item.total_c;
+            oIngreso.total_m = item.total_m;
             oIngreso.categoria_id = item.categoria_id;
+            if (concepto) {
+                oIngreso.concepto = item.concepto;
+            }
+            if (categoria) {
+                oIngreso.categoria = item.categoria;
+            }
             oIngreso.ingreso_detalles = reactive([...item.ingreso_detalles]);
             oIngreso.eliminados = reactive([]);
             oIngreso._method = "PUT";
@@ -145,6 +152,8 @@ export const useIngresos = () => {
         oIngreso.id = 0;
         oIngreso.fecha = "";
         oIngreso.categoria_id = null;
+        oIngreso.total_c = 0;
+        oIngreso.total_m = 0;
         oIngreso.ingreso_detalles = reactive([]);
         oIngreso.eliminados = reactive([]);
         oIngreso._method = "POST";

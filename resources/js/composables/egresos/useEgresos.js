@@ -1,27 +1,28 @@
+import { useForm } from "@inertiajs/vue3";
 import axios from "axios";
-import { onMounted, ref } from "vue";
+import { onMounted, reactive } from "vue";
 import { usePage } from "@inertiajs/vue3";
 
-const oCategoria = ref({
+const oEgreso = reactive({
     id: 0,
-    nombre: "",
-    descripcion: "",
-    tipo: "EGRESO",
-    fecha_registro: "",
+    fecha: "",
+    categoria_id: null,
+    egreso_detalles: reactive([]),
+    eliminados: reactive([]),
+    total_c: 0,
+    total_m: 0,
     _method: "POST",
 });
 
-export const useCategorias = () => {
+export const useEgresos = () => {
     const { flash } = usePage().props;
-    const getCategorias = async (data) => {
+    const getEgresos = async (data) => {
         try {
-            const response = await axios.get(
-                route("categorias.listado", data),
-                {
-                    headers: { Accept: "application/json" },
-                }
-            );
-            return response.data.categorias;
+            const response = await axios.get(route("egresos.listado"), {
+                headers: { Accept: "application/json" },
+                params: data,
+            });
+            return response.data.egresos;
         } catch (err) {
             Swal.fire({
                 icon: "error",
@@ -40,15 +41,12 @@ export const useCategorias = () => {
         }
     };
 
-    const getCategoriasApi = async (data) => {
+    const getEgresosApi = async (data) => {
         try {
-            const response = await axios.get(
-                route("categorias.paginado", data),
-                {
-                    headers: { Accept: "application/json" },
-                }
-            );
-            return response.data.categorias;
+            const response = await axios.get(route("egresos.paginado", data), {
+                headers: { Accept: "application/json" },
+            });
+            return response.data.egresos;
         } catch (err) {
             Swal.fire({
                 icon: "error",
@@ -66,9 +64,9 @@ export const useCategorias = () => {
             throw err; // Puedes manejar el error según tus necesidades
         }
     };
-    const saveCategoria = async (data) => {
+    const saveEgreso = async (data) => {
         try {
-            const response = await axios.post(route("categorias.store", data), {
+            const response = await axios.post(route("egresos.store", data), {
                 headers: { Accept: "application/json" },
             });
             Swal.fire({
@@ -93,19 +91,15 @@ export const useCategorias = () => {
                 confirmButtonColor: "#3085d6",
                 confirmButtonText: `Aceptar`,
             });
-            console.error("Error:", err);
             throw err; // Puedes manejar el error según tus necesidades
         }
     };
 
-    const deleteCategoria = async (id) => {
+    const deleteEgreso = async (id) => {
         try {
-            const response = await axios.delete(
-                route("categorias.destroy", id),
-                {
-                    headers: { Accept: "application/json" },
-                }
-            );
+            const response = await axios.delete(route("egresos.destroy", id), {
+                headers: { Accept: "application/json" },
+            });
             Swal.fire({
                 icon: "success",
                 title: "Correcto",
@@ -132,37 +126,48 @@ export const useCategorias = () => {
         }
     };
 
-    const setCategoria = (item = null) => {
+    const setEgreso = (item = null, concepto = false, categoria = false) => {
         if (item) {
-            oCategoria.value.id = item.id;
-            oCategoria.value.nombre = item.nombre;
-            oCategoria.value.descripcion = item.descripcion;
-            oCategoria.value.tipo = item.tipo;
-            oCategoria.value.fecha_registro = item.fecha_registro;
-            oCategoria.value._method = "PUT";
-            return oCategoria;
+            oEgreso.id = item.id;
+            oEgreso.fecha = item.fecha;
+            oEgreso.fecha_t = item.fecha_t;
+            oEgreso.total_c = item.total_c;
+            oEgreso.total_m = item.total_m;
+            oEgreso.categoria_id = item.categoria_id;
+            if (concepto) {
+                oEgreso.concepto = item.concepto;
+            }
+            if (categoria) {
+                oEgreso.categoria = item.categoria;
+            }
+            oEgreso.egreso_detalles = reactive([...item.egreso_detalles]);
+            oEgreso.eliminados = reactive([]);
+            oEgreso._method = "PUT";
+            return oEgreso;
         }
         return false;
     };
 
-    const limpiarCategoria = () => {
-        oCategoria.value.id = 0;
-        oCategoria.value.nombre = "";
-        oCategoria.value.descripcion = "";
-        oCategoria.value.tipo = "EGRESO";
-        oCategoria.value.fecha_registro = "";
-        oCategoria.value._method = "POST";
+    const limpiarEgreso = () => {
+        oEgreso.id = 0;
+        oEgreso.fecha = "";
+        oEgreso.categoria_id = null;
+        oEgreso.total_c = 0;
+        oEgreso.total_m = 0;
+        oEgreso.egreso_detalles = reactive([]);
+        oEgreso.eliminados = reactive([]);
+        oEgreso._method = "POST";
     };
 
     onMounted(() => {});
 
     return {
-        oCategoria,
-        getCategorias,
-        getCategoriasApi,
-        saveCategoria,
-        deleteCategoria,
-        setCategoria,
-        limpiarCategoria,
+        oEgreso,
+        getEgresos,
+        getEgresosApi,
+        saveEgreso,
+        deleteEgreso,
+        setEgreso,
+        limpiarEgreso,
     };
 };

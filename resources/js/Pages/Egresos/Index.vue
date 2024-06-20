@@ -7,7 +7,7 @@ const breadbrums = [
         name_url: "inicio",
     },
     {
-        title: "Ingresos Económicos",
+        title: "Egresos Económicos",
         disabled: false,
         url: "",
         name_url: "",
@@ -19,7 +19,7 @@ import BreadBrums from "@/Components/BreadBrums.vue";
 import { useApp } from "@/composables/useApp";
 import { useMenu } from "@/composables/useMenu";
 import { Head, usePage } from "@inertiajs/vue3";
-import { useIngresos } from "@/composables/ingresos/useIngresos";
+import { useEgresos } from "@/composables/egresos/useEgresos";
 import { ref, onMounted } from "vue";
 const { mobile, identificaDispositivo, cambiarUrl } = useMenu();
 const { setLoading } = useApp();
@@ -31,9 +31,9 @@ onMounted(() => {
     }, 300);
 });
 
-const { getIngresosApi, deleteIngreso } = useIngresos();
-const responseIngresos = ref([]);
-const listIngresos = ref([]);
+const { getEgresosApi, deleteEgreso } = useEgresos();
+const responseEgresos = ref([]);
+const listEgresos = ref([]);
 const itemsPerPage = ref(5);
 const headers = ref([
     {
@@ -75,37 +75,37 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) => {
 
     clearInterval(setTimeOutLoadData);
     setTimeOutLoadData = setTimeout(async () => {
-        responseIngresos.value = await getIngresosApi(options.value);
-        listIngresos.value = responseIngresos.value.data;
-        totalItems.value = parseInt(responseIngresos.value.total);
+        responseEgresos.value = await getEgresosApi(options.value);
+        listEgresos.value = responseEgresos.value.data;
+        totalItems.value = parseInt(responseEgresos.value.total);
         loading.value = false;
     }, 300);
 };
-const recargaIngresos = async () => {
+const recargaEgresos = async () => {
     loading.value = true;
-    listIngresos.value = [];
+    listEgresos.value = [];
     options.value.search = search.value;
-    responseIngresos.value = await getIngresosApi(options.value);
-    listIngresos.value = responseIngresos.value.data;
-    totalItems.value = parseInt(responseIngresos.value.total);
+    responseEgresos.value = await getEgresosApi(options.value);
+    listEgresos.value = responseEgresos.value.data;
+    totalItems.value = parseInt(responseEgresos.value.total);
     setTimeout(() => {
         loading.value = false;
     }, 300);
 };
 
-const editarIngreso = (item) => {
-    cambiarUrl(route("ingresos.edit", item.id));
+const editarEgreso = (item) => {
+    cambiarUrl(route("egresos.edit", item.id));
 };
 
-const verIngreso = (item) => {
-    cambiarUrl(route("ingresos.show", item.id));
+const verEgreso = (item) => {
+    cambiarUrl(route("egresos.show", item.id));
 };
 
 const pdf = (item) => {
-    window.open(route("ingresos.pdf", item.id), "_blank");
+    window.open(route("egresos.pdf", item.id), "_blank");
 };
 
-const eliminarIngreso = (item) => {
+const eliminarEgreso = (item) => {
     Swal.fire({
         title: "¿Quierés eliminar este registro?",
         html: `<strong>${item.fecha_t} - ${item.categoria.nombre}</strong>`,
@@ -117,9 +117,9 @@ const eliminarIngreso = (item) => {
     }).then(async (result) => {
         /* Read more about isConfirmed, isDenied below */
         if (result.isConfirmed) {
-            let respuesta = await deleteIngreso(item.id);
+            let respuesta = await deleteEgreso(item.id);
             if (respuesta && respuesta.sw) {
-                recargaIngresos();
+                recargaEgresos();
             }
         }
     });
@@ -127,16 +127,16 @@ const eliminarIngreso = (item) => {
 const verUbicación = async (item) => {};
 </script>
 <template>
-    <Head title="Ingresos Económicos"></Head>
+    <Head title="Egresos Económicos"></Head>
     <v-container>
         <BreadBrums :breadbrums="breadbrums"></BreadBrums>
         <v-row class="mt-0">
             <v-col cols="12" class="d-flex justify-end">
                 <v-btn
-                    v-if="props.auth.user.permisos.includes('ingresos.create')"
+                    v-if="props.auth.user.permisos.includes('egresos.create')"
                     color="primary"
                     prepend-icon="mdi-plus"
-                    @click="cambiarUrl(route('ingresos.create'))"
+                    @click="cambiarUrl(route('egresos.create'))"
                 >
                     Agregar</v-btn
                 >
@@ -148,7 +148,7 @@ const verUbicación = async (item) => {};
                     <v-card-title>
                         <v-row class="bg-primary d-flex align-center pa-3">
                             <v-col cols="12" sm="6" md="4">
-                                Ingresos Económicos</v-col
+                                Egresos Económicos</v-col
                             >
                             <v-col cols="12" sm="6" md="4" offset-md="4">
                                 <v-text-field
@@ -168,7 +168,7 @@ const verUbicación = async (item) => {};
                             :headers="!mobile ? headers : []"
                             :class="[mobile ? 'mobile' : '']"
                             :items-length="totalItems"
-                            :items="listIngresos"
+                            :items="listEgresos"
                             :loading="loading"
                             :search="search"
                             @update:options="loadItems"
@@ -219,31 +219,31 @@ const verUbicación = async (item) => {};
                                                 color="primary"
                                                 size="small"
                                                 class="pa-1 ma-1"
-                                                @click="verIngreso(item)"
+                                                @click="verEgreso(item)"
                                                 icon="mdi-eye-circle"
                                             ></v-btn>
                                             <v-btn
                                                 v-if="
                                                     props.auth.user.permisos.includes(
-                                                        'ingresos.edit'
+                                                        'egresos.edit'
                                                     )
                                                 "
                                                 color="yellow"
                                                 size="small"
                                                 class="pa-1 ma-1"
-                                                @click="editarIngreso(item)"
+                                                @click="editarEgreso(item)"
                                                 icon="mdi-pencil"
                                             ></v-btn>
                                             <v-btn
                                                 v-if="
                                                     props.auth.user.permisos.includes(
-                                                        'ingresos.destroy'
+                                                        'egresos.destroy'
                                                     )
                                                 "
                                                 color="error"
                                                 size="small"
                                                 class="pa-1 ma-1"
-                                                @click="eliminarIngreso(item)"
+                                                @click="eliminarEgreso(item)"
                                                 icon="mdi-trash-can"
                                             ></v-btn>
                                         </td>
@@ -292,7 +292,7 @@ const verUbicación = async (item) => {};
                                                             <tr
                                                                 v-for="(
                                                                     item_detalle, index
-                                                                ) in item.ingreso_detalles"
+                                                                ) in item.egreso_detalles"
                                                             >
                                                                 <td>
                                                                     {{
@@ -380,9 +380,9 @@ const verUbicación = async (item) => {};
                                                 </li>
                                                 <li
                                                     class="flex-item"
-                                                    data-label="Fecha de Ingreso:"
+                                                    data-label="Fecha de Egreso:"
                                                 >
-                                                    {{ item.fecha_ingreso_t }}
+                                                    {{ item.fecha_egreso_t }}
                                                 </li>
                                                 <li
                                                     class="flex-item"
@@ -402,7 +402,7 @@ const verUbicación = async (item) => {};
                                                 <template v-if="item.mas">
                                                     <li
                                                         class="flex-item"
-                                                        data-label="Ingreso Detalle:"
+                                                        data-label="Egreso Detalle:"
                                                     >
                                                         <v-table class="border">
                                                             <thead>
@@ -439,7 +439,7 @@ const verUbicación = async (item) => {};
                                                                     v-for="(
                                                                         item_detalle,
                                                                         index
-                                                                    ) in item.ingreso_detalles"
+                                                                    ) in item.egreso_detalles"
                                                                 >
                                                                     <td>
                                                                         {{
@@ -518,35 +518,35 @@ const verUbicación = async (item) => {};
                                                         size="small"
                                                         class="pa-1 ma-1"
                                                         @click="
-                                                            verIngreso(item)
+                                                            verEgreso(item)
                                                         "
                                                         icon="mdi-eye-circle"
                                                     ></v-btn>
                                                     <v-btn
                                                         v-if="
                                                             props.auth.user.permisos.includes(
-                                                                'ingresos.edit'
+                                                                'egresos.edit'
                                                             )
                                                         "
                                                         color="yellow"
                                                         size="small"
                                                         class="pa-1 ma-1"
                                                         @click="
-                                                            editarIngreso(item)
+                                                            editarEgreso(item)
                                                         "
                                                         icon="mdi-pencil"
                                                     ></v-btn>
                                                     <v-btn
                                                         v-if="
                                                             props.auth.user.permisos.includes(
-                                                                'ingresos.destroy'
+                                                                'egresos.destroy'
                                                             )
                                                         "
                                                         color="error"
                                                         size="small"
                                                         class="pa-1 ma-1"
                                                         @click="
-                                                            eliminarIngreso(
+                                                            eliminarEgreso(
                                                                 item
                                                             )
                                                         "

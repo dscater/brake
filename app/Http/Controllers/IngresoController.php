@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\HistorialAccion;
 use App\Models\Ingreso;
+use App\Models\IngresoDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,13 +15,13 @@ class IngresoController extends Controller
 {
     public $validacion = [
         "categoria_id" => "required",
-        "nombre" => "required|min:2",
+        "fecha" => "required|date",
     ];
 
     public $mensajes = [
         "categoria_id.required" => "Este campo es obligatorio",
-        "nombre.required" => "Este campo es obligatorio",
-        "nombre.min" => "Debes ingresar al menos :min caracteres",
+        "fecha.required" => "Este campo es obligatorio",
+        "fecha.date" => "Debes ingresar una fecha valida",
     ];
 
     public function index()
@@ -46,7 +47,7 @@ class IngresoController extends Controller
     public function paginado(Request $request)
     {
         $search = $request->search;
-        $ingresos = Ingreso::with(["categoria"])->select("ingresos.*");
+        $ingresos = Ingreso::with(["categoria", "ingreso_detalles.concepto"])->select("ingresos.*");
         if (trim($search) != "") {
             $ingresos->where("nombre", "LIKE", "%$search%");
         }
@@ -64,12 +65,29 @@ class IngresoController extends Controller
 
     public function store(Request $request)
     {
+        $ingreso_detalles = $request->ingreso_detalles;
+        if (!isset($request->ingreso_detalles) || count($ingreso_detalles) <= 0) {
+
+            throw ValidationException::withMessages([
+                'error' =>  "Debes agregar al menos 1 concepto",
+            ]);
+        }
         $request->validate($this->validacion, $this->mensajes);
         $request['fecha_registro'] = date('Y-m-d');
         DB::beginTransaction();
         try {
             // crear el Ingreso
-            $nuevo_ingreso = Ingreso::create(array_map('mb_strtoupper', $request->all()));
+            $nuevo_ingreso = Ingreso::create(array_map('mb_strtoupper', $request->except(["ingreso_detalles", "eliminados"])));
+
+            foreach ($ingreso_detalles as $item) {
+                $nuevo_ingreso->ingreso_detalles()->create([
+                    "concepto_id" => $item["concepto_id"],
+                    "descripcion" => mb_strtoupper($item["descripcion"]),
+                    "cantidad" => $item["cantidad"],
+                    "monto" => $item["monto"],
+                ]);
+            }
+
             $datos_original = HistorialAccion::getDetalleRegistro($nuevo_ingreso, "ingresos");
             HistorialAccion::create([
                 'user_id' => Auth::user()->id,
@@ -93,20 +111,47 @@ class IngresoController extends Controller
 
     public function show(Ingreso $ingreso)
     {
+        $ingreso = $ingreso->load(["categoria", "ingreso_detalles.concepto"]);
+        return Inertia::render("Ingresos/Show", compact("ingreso"));
     }
     public function edit(Ingreso $ingreso)
     {
-        $ingreso = $ingreso->load(["categoria", "ingreso_detalles"]);
+        $ingreso = $ingreso->load(["categoria", "ingreso_detalles.concepto"]);
         return Inertia::render("Ingresos/Edit", compact("ingreso"));
     }
 
     public function update(Ingreso $ingreso, Request $request)
     {
+        $ingreso_detalles = $request->ingreso_detalles;
+        if (!isset($request->ingreso_detalles) || count($ingreso_detalles) <= 0) {
+
+            throw ValidationException::withMessages([
+                'error' =>  "Debes agregar al menos 1 concepto",
+            ]);
+        }
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
             $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
-            $ingreso->update(array_map('mb_strtoupper', $request->all()));
+            $ingreso->update(array_map('mb_strtoupper',  $request->except(["ingreso_detalles", "eliminados"])));
+
+            if (isset($request->eliminados)) {
+                foreach ($request->eliminados as $value) {
+                    $ingreso_detalle = IngresoDetalle::find($value);
+                    $ingreso_detalle->delete();
+                }
+            }
+
+            foreach ($ingreso_detalles as $item) {
+                if ($item["id"] == 0) {
+                    $ingreso->ingreso_detalles()->create([
+                        "concepto_id" => $item["concepto_id"],
+                        "descripcion" => $item["descripcion"],
+                        "cantidad" => $item["cantidad"],
+                        "monto" => $item["monto"],
+                    ]);
+                }
+            }
 
             $datos_nuevo = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
             HistorialAccion::create([
@@ -133,20 +178,8 @@ class IngresoController extends Controller
     {
         DB::beginTransaction();
         try {
-            $usos = IngresoDetalle::where("ingreso_id", $ingreso->id)->get();
-            if (count($usos) > 0) {
-                throw ValidationException::withMessages([
-                    'error' =>  "No es posible eliminar esta categoría porque esta siendo utilizada por otros registros",
-                ]);
-            }
-            $usos = EgresoDetalle::where("ingreso_id", $ingreso->id)->get();
-            if (count($usos) > 0) {
-                throw ValidationException::withMessages([
-                    'error' =>  "No es posible eliminar esta categoría porque esta siendo utilizada por otros registros",
-                ]);
-            }
-
             $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
+            $ingreso->ingreso_detalles()->delete();
             $ingreso->delete();
             HistorialAccion::create([
                 'user_id' => Auth::user()->id,
