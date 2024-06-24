@@ -42,9 +42,8 @@ const txtBtn = computed(() => {
 
 const listTipos = ref([
     { value: "TODOS", label: "TODOS" },
-    { value: "ADMINISTRADOR", label: "ADMINISTRADOR" },
-    { value: "SUPERVISOR DE ALMACEN", label: "SUPERVISOR DE ALMACEN" },
-    { value: "ALMACENERO", label: "ALMACENERO" },
+    { value: "GERENTE", label: "GERENTE" },
+    { value: "OPERADOR", label: "OPERADOR" },
 ]);
 
 const generarReporte = () => {
@@ -92,7 +91,7 @@ const generarReporte = () => {
                                     </v-col>
                                     <v-col cols="12">
                                         <v-btn
-                                            color="yellow-accent-3"
+                                            class="bg-principal"
                                             block
                                             @click="generarReporte"
                                             :disabled="generando"

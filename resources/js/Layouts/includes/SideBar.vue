@@ -23,6 +23,11 @@ const user_logeado = ref({
 
 const submenus = {
     "reportes.usuarios": "Reportes",
+    "reportes.ingresos": "Reportes",
+    "reportes.egresos": "Reportes",
+    "reportes.presupuestos": "Reportes",
+    "reportes.ganancias": "Reportes",
+    "reportes.movimientos": "Reportes",
 };
 
 const route_current = ref("");
@@ -283,7 +288,11 @@ const scrollActive = () => {
                 class="mx-3"
                 v-if="
                     oUser.permisos.includes('reportes.usuarios') ||
-                    oUser.permisos.includes('reportes.productos')
+                    oUser.permisos.includes('reportes.ingresos')||
+                    oUser.permisos.includes('reportes.egresos')||
+                    oUser.permisos.includes('reportes.presupuestos')||
+                    oUser.permisos.includes('reportes.ganancias')||
+                    oUser.permisos.includes('reportes.movimientos')
                 "
             >
                 <template v-slot:activator="{ props }">
@@ -293,7 +302,11 @@ const scrollActive = () => {
                         title="Reportes"
                         :class="[
                             route_current == 'reporutes.usuarios' ||
-                            route_current == 'reportes.productos'
+                            route_current == 'reportes.ingresos'||
+                            route_current == 'reportes.egresos'||
+                            route_current == 'reportes.presupuestos'||
+                            route_current == 'reportes.ganancias'||
+                            route_current == 'reportes.movimientos'
                                 ? 'active'
                                 : '',
                         ]"
@@ -324,6 +337,100 @@ const scrollActive = () => {
                         activator="parent"
                         location="end"
                         >Usuarios</v-tooltip
+                    ></v-list-item
+                >
+                <v-list-item
+                    v-if="oUser.permisos.includes('reportes.ingresos')"
+                    prepend-icon="mdi-chevron-right"
+                    title="Ingresos Económicos"
+                    :class="[
+                        route_current == 'reportes.ingresos' ? 'active' : '',
+                        drawer ? 'px-3' : '',
+                    ]"
+                    @click="cambiarUrl(route('reportes.ingresos'))"
+                    link
+                >
+                    <v-tooltip
+                        v-if="rail && !mobile"
+                        color="white"
+                        activator="parent"
+                        location="end"
+                        >Ingresos Económicos</v-tooltip
+                    ></v-list-item
+                >
+                <v-list-item
+                    v-if="oUser.permisos.includes('reportes.egresos')"
+                    prepend-icon="mdi-chevron-right"
+                    title="Egresos Económicos"
+                    :class="[
+                        route_current == 'reportes.egresos' ? 'active' : '',
+                        drawer ? 'px-3' : '',
+                    ]"
+                    @click="cambiarUrl(route('reportes.egresos'))"
+                    link
+                >
+                    <v-tooltip
+                        v-if="rail && !mobile"
+                        color="white"
+                        activator="parent"
+                        location="end"
+                        >Egresos Económicos</v-tooltip
+                    ></v-list-item
+                >
+                <v-list-item
+                    v-if="oUser.permisos.includes('reportes.presupuestos')"
+                    prepend-icon="mdi-chevron-right"
+                    title="Presupuestos"
+                    :class="[
+                        route_current == 'reportes.presupuestos' ? 'active' : '',
+                        drawer ? 'px-3' : '',
+                    ]"
+                    @click="cambiarUrl(route('reportes.presupuestos'))"
+                    link
+                >
+                    <v-tooltip
+                        v-if="rail && !mobile"
+                        color="white"
+                        activator="parent"
+                        location="end"
+                        >Presupuestos</v-tooltip
+                    ></v-list-item
+                >
+                <v-list-item
+                    v-if="oUser.permisos.includes('reportes.ganancias')"
+                    prepend-icon="mdi-chevron-right"
+                    title="Ganancias Netas"
+                    :class="[
+                        route_current == 'reportes.ganancias' ? 'active' : '',
+                        drawer ? 'px-3' : '',
+                    ]"
+                    @click="cambiarUrl(route('reportes.ganancias'))"
+                    link
+                >
+                    <v-tooltip
+                        v-if="rail && !mobile"
+                        color="white"
+                        activator="parent"
+                        location="end"
+                        >Ganancias Netas</v-tooltip
+                    ></v-list-item
+                >
+                <v-list-item
+                    v-if="oUser.permisos.includes('reportes.movimientos')"
+                    prepend-icon="mdi-chevron-right"
+                    title="Movimientos de I. y E. Económicos"
+                    :class="[
+                        route_current == 'reportes.movimientos' ? 'active' : '',
+                        drawer ? 'px-3' : '',
+                    ]"
+                    @click="cambiarUrl(route('reportes.movimientos'))"
+                    link
+                >
+                    <v-tooltip
+                        color="white"
+                        activator="parent"
+                        location="end"
+                        >Movimientos de Ingresos y Egresos Económicos</v-tooltip
                     ></v-list-item
                 >
             </v-list-group>

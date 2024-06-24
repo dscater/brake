@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categoria;
+use App\Models\Egreso;
+use App\Models\EgresoDetalle;
 use App\Models\Ingreso;
 use App\Models\Salida;
 use App\Models\IngresoDetalle;
@@ -46,441 +49,162 @@ class ReporteController extends Controller
         return $pdf->stream('usuarios.pdf');
     }
 
-    public function productos()
+    public function ingresos()
     {
-        return Inertia::render("Reportes/Productos");
+        return Inertia::render("Reportes/Ingresos");
     }
-
-    public function r_productos(Request $request)
+    public function r_ingresos(Request $request)
     {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-
-        $productos = Producto::where('status',  1)->get();
-        if ($filtro != 'todos') {
-            if ($producto_id != 'todos' && $filtro == 'producto') {
-                $productos = Producto::where('status',  1)->where("id", $producto_id)->get();
-            }
-            if ($categoria_id != 'todos' && $filtro == 'categoria') {
-                $productos = Producto::where('status',  1)->where("categoria_id", $categoria_id)->get();
-            }
-
-            if ($tipo_producto_id != 'todos' && $filtro == 'tipo_producto') {
-                $productos = Producto::where('status',  1)->where("tipo_producto_id", $tipo_producto_id)->get();
-            }
-        }
-
-
-        $pdf = PDF::loadView('reportes.productos', compact('productos'))->setPaper('letter', 'portrait');
-
-        // ENUMERAR LAS PÁGINAS USANDO CANVAS
-        $pdf->output();
-        $dom_pdf = $pdf->getDomPDF();
-        $canvas = $dom_pdf->get_canvas();
-        $alto = $canvas->get_height();
-        $ancho = $canvas->get_width();
-        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-        return $pdf->stream('productos.pdf');
-    }
-
-    public function ingreso_productos()
-    {
-        return Inertia::render("Reportes/IngresoProductos");
-    }
-
-    public function r_ingreso_productos(Request $request)
-    {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-        $tipo_ingreso_id =  $request->tipo_ingreso_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-
-
-        $ingreso_productos = Ingreso::select("ingresos.*")
-            ->join("ingreso_detalles", "ingreso_detalles.ingreso_id", "=", "ingresos.id")
-            ->join("productos", "productos.id", "=", "ingreso_detalles.producto_id")
-            ->where("productos.status", 1)
-            ->get();
-
-        if ($fecha_ini && $fecha_fin) {
-            $ingreso_productos = Ingreso::whereBetween("fecha_ingreso", [$fecha_ini, $fecha_fin])->get();
-        }
-
-        if ($filtro != 'todos') {
-            if ($filtro == 'producto' && $producto_id != 'todos') {
-                $ingreso_productos = Ingreso::select("ingresos.*")
-                    ->join("ingreso_detalles", "ingreso_detalles.ingreso_id", "=", "ingresos.id")
-                    ->join("productos", "productos.id", "=", "ingreso_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("productos.id", $producto_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $ingreso_productos->whereBetween("ingresos.fecha_ingreso", [$fecha_ini, $fecha_fin]);
-                }
-                $ingreso_productos = $ingreso_productos->get();
-            }
-            if ($filtro == 'categoria' && $categoria_id != 'todos') {
-                $ingreso_productos = Ingreso::select("ingresos.*")
-                    ->join("ingreso_detalles", "ingreso_detalles.ingreso_id", "=", "ingresos.id")
-                    ->join("productos", "productos.id", "=", "ingreso_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("productos.categoria_id", $categoria_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $ingreso_productos->whereBetween("ingresos.fecha_ingreso", [$fecha_ini, $fecha_fin]);
-                }
-                $ingreso_productos = $ingreso_productos->get();
-            }
-            if ($filtro == 'tipo_producto' && $tipo_producto_id != 'todos') {
-                $ingreso_productos = Ingreso::select("ingresos.*")
-                    ->join("ingreso_detalles", "ingreso_detalles.ingreso_id", "=", "ingresos.id")
-                    ->join("productos", "productos.id", "=", "ingreso_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("productos.tipo_producto_id", $tipo_producto_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $ingreso_productos->whereBetween("ingresos.fecha_ingreso", [$fecha_ini, $fecha_fin]);
-                }
-                $ingreso_productos = $ingreso_productos->get();
-            }
-            if ($filtro == 'tipo_ingreso' && $tipo_ingreso_id != 'todos') {
-                $ingreso_productos = Ingreso::select("ingresos.*")
-                    ->join("ingreso_detalles", "ingreso_detalles.ingreso_id", "=", "ingresos.id")
-                    ->join("productos", "productos.id", "=", "ingreso_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("ingresos.tipo_ingreso_id", $tipo_ingreso_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $ingreso_productos->whereBetween("ingresos.fecha_ingreso", [$fecha_ini, $fecha_fin]);
-                }
-                $ingreso_productos = $ingreso_productos->get();
-            }
-        }
-
-        $pdf = PDF::loadView('reportes.ingreso_productos', compact('ingreso_productos'))->setPaper('legal', 'landscape');
-
-        // ENUMERAR LAS PÁGINAS USANDO CANVAS
-        $pdf->output();
-        $dom_pdf = $pdf->getDomPDF();
-        $canvas = $dom_pdf->get_canvas();
-        $alto = $canvas->get_height();
-        $ancho = $canvas->get_width();
-        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-        return $pdf->stream('ingreso_productos.pdf');
-    }
-
-    public function rg_ingreso_productos(Request $request)
-    {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-        $tipo_ingreso_id =  $request->tipo_ingreso_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-
-        $productos = Producto::where("status", 1)->get();
-        if ($filtro != 'todos') {
-            if ($filtro == 'producto' && $producto_id != 'todos') {
-                $productos = Producto::where("status", 1)->where("id", $producto_id)->get();
-            }
-            if ($filtro == 'categoria' && $categoria_id != 'todos') {
-                $productos = Producto::where("status", 1)->where("categoria_id", $categoria_id)->get();
-            }
-            if ($filtro == 'tipo_producto_id' && $tipo_producto_id != 'todos') {
-                $productos = Producto::where("status", 1)->where("tipo_producto_id", $tipo_producto_id)->get();
-            }
-        }
-
-        $data = [];
-        foreach ($productos as $prod) {
-            $total_ingresos = IngresoDetalle::join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id");
-            $total_ingresos->where("ingreso_detalles.producto_id", $prod->id);
-            if ($filtro == 'tipo_ingreso' && $tipo_ingreso_id != 'todos') {
-                $total_ingresos->where("ingresos.tipo_ingreso_id", $tipo_ingreso_id);
-            }
-
-            if ($fecha_ini && $fecha_fin) {
-                $total_ingresos->whereBetween("ingresos.fecha_ingreso", [$fecha_ini, $fecha_fin]);
-            }
-
-            $total_ingresos = $total_ingresos->sum("ingreso_detalles.cantidad");
-            $data[] = [$prod->nombre, (float)$total_ingresos];
-        }
-
-        return response()->JSON([
-            "data" => $data,
-        ]);
-    }
-
-    public function salida_productos()
-    {
-        return Inertia::render("Reportes/SalidaProductos");
-    }
-
-    public function r_salida_productos(Request $request)
-    {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-        $tipo_salida_id =  $request->tipo_salida_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-
-        $salida_productos = Salida::select("salidas.*")
-            ->join("salida_detalles", "salida_detalles.salida_id", "=", "salidas.id")
-            ->join("productos", "productos.id", "=", "salida_detalles.producto_id")
-            ->where("productos.status", 1)
-            ->get();
-
-        if ($fecha_ini && $fecha_fin) {
-            $salida_productos = Salida::whereBetween("fecha_salida", [$fecha_ini, $fecha_fin])->get();
-        }
-
-        if ($filtro != 'todos') {
-            if ($filtro == 'producto' && $producto_id != 'todos') {
-                $salida_productos = Salida::select("salidas.*")
-                    ->join("salida_detalles", "salida_detalles.salida_id", "=", "salidas.id")
-                    ->join("productos", "productos.id", "=", "salida_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("productos.id", $producto_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $salida_productos->whereBetween("salidas.fecha_salida", [$fecha_ini, $fecha_fin]);
-                }
-                $salida_productos = $salida_productos->get();
-            }
-            if ($filtro == 'categoria' && $categoria_id != 'todos') {
-                $salida_productos = Salida::select("salidas.*")
-                    ->join("salida_detalles", "salida_detalles.salida_id", "=", "salidas.id")
-                    ->join("productos", "productos.id", "=", "salida_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("productos.categoria_id", $categoria_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $salida_productos->whereBetween("salidas.fecha_salida", [$fecha_ini, $fecha_fin]);
-                }
-                $salida_productos = $salida_productos->get();
-            }
-            if ($filtro == 'tipo_producto' && $tipo_producto_id != 'todos') {
-                $salida_productos = Salida::select("salidas.*")
-                    ->join("salida_detalles", "salida_detalles.salida_id", "=", "salidas.id")
-                    ->join("productos", "productos.id", "=", "salida_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("productos.tipo_producto_id", $tipo_producto_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $salida_productos->whereBetween("salidas.fecha_salida", [$fecha_ini, $fecha_fin]);
-                }
-                $salida_productos = $salida_productos->get();
-            }
-            if ($filtro == 'tipo_salida' && $tipo_salida_id != 'todos') {
-                $salida_productos = Salida::select("salidas.*")
-                    ->join("salida_detalles", "salida_detalles.salida_id", "=", "salidas.id")
-                    ->join("productos", "productos.id", "=", "salida_detalles.producto_id")
-                    ->where("productos.status", 1)
-                    ->where("salidas.tipo_salida_id", $tipo_salida_id);
-                if ($fecha_ini && $fecha_fin) {
-                    $salida_productos->whereBetween("salidas.fecha_salida", [$fecha_ini, $fecha_fin]);
-                }
-                $salida_productos = $salida_productos->get();
-            }
-        }
-
-        $pdf = PDF::loadView('reportes.salida_productos', compact('salida_productos'))->setPaper('legal', 'landscape');
-
-        // ENUMERAR LAS PÁGINAS USANDO CANVAS
-        $pdf->output();
-        $dom_pdf = $pdf->getDomPDF();
-        $canvas = $dom_pdf->get_canvas();
-        $alto = $canvas->get_height();
-        $ancho = $canvas->get_width();
-        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-        return $pdf->stream('salida_productos.pdf');
-    }
-
-    public function rg_salida_productos(Request $request)
-    {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-        $tipo_salida_id =  $request->tipo_salida_id;
-        $fecha_ini =  $request->fecha_ini;
-        $fecha_fin =  $request->fecha_fin;
-
-        $productos = Producto::where("status", 1)->get();
-        if ($filtro != 'todos') {
-            if ($filtro == 'producto' && $producto_id != 'todos') {
-                $productos = Producto::where("status", 1)->where("id", $producto_id)->get();
-            }
-            if ($filtro == 'categoria' && $categoria_id != 'todos') {
-                $productos = Producto::where("status", 1)->where("categoria_id", $categoria_id)->get();
-            }
-            if ($filtro == 'tipo_producto_id' && $tipo_producto_id != 'todos') {
-                $productos = Producto::where("status", 1)->where("tipo_producto_id", $tipo_producto_id)->get();
-            }
-        }
-
-        $data = [];
-        foreach ($productos as $prod) {
-            $total_salidas = SalidaDetalle::join("salidas", "salidas.id", "=", "salida_detalles.salida_id");
-            $total_salidas->where("salida_detalles.producto_id", $prod->id);
-            if ($filtro == 'tipo_salida' && $tipo_salida_id != 'todos') {
-                $total_salidas->where("salidas.tipo_salida_id", $tipo_salida_id);
-            }
-
-            if ($fecha_ini && $fecha_fin) {
-                $total_salidas->whereBetween("salidas.fecha_salida", [$fecha_ini, $fecha_fin]);
-            }
-
-            $total_salidas = $total_salidas->sum("salida_detalles.cantidad");
-            $data[] = [$prod->nombre, (float)$total_salidas];
-        }
-
-        return response()->JSON([
-            "data" => $data,
-        ]);
-    }
-
-    public function inventario_productos()
-    {
-        return Inertia::render("Reportes/InventarioProductos");
-    }
-
-    public function r_inventario_productos(Request $request)
-    {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-
-        $productos = Producto::where('status', 1)->get();
-        if ($filtro != 'TODOS') {
-            if ($filtro == 'producto' && $producto_id != 'todos') {
-                $productos = Producto::where('status', 1)->where("id", $producto_id)->get();
-            }
-            if ($filtro == 'categoria' && $categoria_id != 'todos') {
-                $productos = Producto::where('status', 1)->where("categoria_id", $categoria_id)->get();
-            }
-            if ($filtro == 'tipo_producto' && $tipo_producto_id != 'todos') {
-                $productos = Producto::where('status', 1)->where("tipo_producto_id", $tipo_producto_id)->get();
-            }
-        }
-
-        $pdf = PDF::loadView('reportes.inventario_productos', compact('productos'))->setPaper('letter', 'portrait');
-
-        // ENUMERAR LAS PÁGINAS USANDO CANVAS
-        $pdf->output();
-        $dom_pdf = $pdf->getDomPDF();
-        $canvas = $dom_pdf->get_canvas();
-        $alto = $canvas->get_height();
-        $ancho = $canvas->get_width();
-        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-
-        return $pdf->stream('inventario_productos.pdf');
-    }
-
-    public function rg_inventario_productos(Request $request)
-    {
-        $filtro =  $request->filtro;
-        $producto_id =  $request->producto_id;
-        $categoria_id =  $request->categoria_id;
-        $tipo_producto_id =  $request->tipo_producto_id;
-        $data = [];
-
-        $productos = Producto::where('status', 1)->get();
-        if ($filtro != 'TODOS') {
-            if ($filtro == 'producto' && $producto_id != 'todos') {
-                $productos = Producto::where('status', 1)->where("id", $producto_id)->get();
-            }
-            if ($filtro == 'categoria' && $categoria_id != 'todos') {
-                $productos = Producto::where('status', 1)->where("categoria_id", $categoria_id)->get();
-            }
-            if ($filtro == 'tipo_producto' && $tipo_producto_id != 'todos') {
-                $productos = Producto::where('status', 1)->where("tipo_producto_id", $tipo_producto_id)->get();
-            }
-        }
-
-        foreach ($productos as $producto) {
-            $data[] = [$producto->nombre, (float)$producto->stock_actual];
-        }
-
-        return response()->JSON([
-            "data" => $data,
-        ]);
-    }
-
-    public function kardex_productos()
-    {
-        return Inertia::render("Reportes/KardexProductos");
-    }
-
-    public function r_kardex_productos(Request $request)
-    {
-        $filtro = $request->filtro;
-        $producto_id = $request->producto_id;
         $categoria_id = $request->categoria_id;
-        $tipo_producto_id = $request->tipo_producto_id;
+        $concepto_id = $request->concepto_id;
         $fecha_ini = $request->fecha_ini;
         $fecha_fin = $request->fecha_fin;
+        $ingresos = Ingreso::orderBy("created_at", "asc")->get();
 
-        if ($request->filtro == 'Producto') {
-            $request->validate([
-                'producto_id' => 'required',
-            ]);
+        $categorias = Categoria::where("tipo", "INGRESO")->orderBy("nombre", "asc")->get();
+        if ($categoria_id != 'todos') {
+            $categorias = Categoria::where("tipo", "INGRESO")->where("id", $categoria_id)->orderBy("nombre", "asc")->get();
         }
 
-        $productos = Producto::all();
-        if ($filtro != 'todos') {
-            if ($filtro == 'Producto') {
-                $productos = Producto::where("id", $producto_id)->get();
+        $html = "";
+        $total_cantidad = 0;
+        $total_monto = 0;
+        foreach ($categorias as $item) {
+            $html .= '<tr>';
+            $html .= '<td colspan="5" class="subtitle">' . $item->nombre . '</td>';
+            $html .= '</tr>';
+            // DATOS
+            $ingreso_detalles = IngresoDetalle::select("ingreso_detalles.*")
+                ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
+                ->where("ingresos.categoria_id", $item->id)->orderBy("ingresos.fecha", "asc");
+            if ($concepto_id != 'todos') {
+                $ingreso_detalles->where("ingreso_detalles.concepto_id", $concepto_id);
+            }
+
+            if ($fecha_ini && $fecha_fin) {
+                $ingreso_detalles->whereBetween("ingresos.fecha", [$fecha_ini, $fecha_fin]);
+            }
+
+            $ingreso_detalles = $ingreso_detalles->get();
+            foreach ($ingreso_detalles as $value) {
+                $html .= '<tr>';
+                $html .= '<td>' . $value->concepto->nombre . '</td>';
+                $html .= '<td>' . $value->descripcion . '</td>';
+                $html .= '<td>' . $value->ingreso->fecha_t . '</td>';
+                $html .= '<td class="centreado">' . $value->cantidad . '</td>';
+                $html .= '<td class="centreado">' . $value->monto . '</td>';
+                $html .= '</tr>';
+                $total_cantidad += (float)$value->cantidad;
+                $total_monto += (float)$value->monto;
             }
         }
+        $html .= '<tr>';
+        $html .= '<td colspan="3" class="derecha bold">TOTAL</td>';
+        $html .= '<td class="centreado bold">' . $total_cantidad . '</td>';
+        $html .= '<td class="centreado bold">' . $total_monto . '</td>';
+        $html .= '</tr>';
 
-        $array_kardex = [];
-        $array_saldo_anterior = [];
-        foreach ($productos as $registro) {
-            $array_saldo_anterior[$registro->id] = [
-                'sw' => false,
-                'saldo_anterior' => []
-            ];
-            $kardex = KardexProducto::where('producto_id', $registro->id)
-                ->whereBetween('fecha', [$fecha_ini, $fecha_fin])->get();
-            // buscar saldo anterior si existe
-            $saldo_anterior = KardexProducto::where('producto_id', $registro->id)
-                ->where('fecha', '<', $fecha_ini)
-                ->orderBy('created_at', 'asc')->get()->last();
-            if ($saldo_anterior) {
-                $cantidad_saldo = $saldo_anterior->cantidad_saldo;
-                $monto_saldo = $saldo_anterior->monto_saldo;
-                $array_saldo_anterior[$registro->id] = [
-                    'sw' => true,
-                    'saldo_anterior' => [
-                        'cantidad_saldo' => $cantidad_saldo,
-                        'monto_saldo' => $monto_saldo,
-                    ]
-                ];
-            }
-            $array_kardex[$registro->id] = $kardex;
-        }
+        $pdf = PDF::loadView('reportes.ingresos', compact('ingresos', 'html'))->setPaper('legal', 'portrait');
 
-        $pdf = PDF::loadView('reportes.kardex_productos', compact('productos', 'array_kardex', 'array_saldo_anterior'))->setPaper('letter', 'portrait');
-
-        // ENUMERAR LAS PÁGINAS
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
         $pdf->output();
         $dom_pdf = $pdf->getDomPDF();
         $canvas = $dom_pdf->get_canvas();
         $alto = $canvas->get_height();
         $ancho = $canvas->get_width();
         $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
-        return $pdf->stream('kardex_productos.pdf');
-    }
 
-    public function analisis_almacen()
+        return $pdf->stream('ingresos.pdf');
+    }
+    public function egresos()
     {
-        return Inertia::render("Reportes/AnalisisAlmacen");
+        return Inertia::render("Reportes/Egresos");
+    }
+    public function r_egresos(Request $request)
+    {
+        $categoria_id = $request->categoria_id;
+        $concepto_id = $request->concepto_id;
+        $fecha_ini = $request->fecha_ini;
+        $fecha_fin = $request->fecha_fin;
+        $egresos = Egreso::orderBy("created_at", "asc")->get();
+
+        $categorias = Categoria::where("tipo", "EGRESO")->orderBy("nombre", "asc")->get();
+        if ($categoria_id != 'todos') {
+            $categorias = Categoria::where("tipo", "EGRESO")->where("id", $categoria_id)->orderBy("nombre", "asc")->get();
+        }
+
+        $html = "";
+        $total_cantidad = 0;
+        $total_monto = 0;
+        foreach ($categorias as $item) {
+            $html .= '<tr>';
+            $html .= '<td colspan="5" class="subtitle">' . $item->nombre . '</td>';
+            $html .= '</tr>';
+            // DATOS
+            $egreso_detalles = EgresoDetalle::select("egreso_detalles.*")
+                ->join("egresos", "egresos.id", "=", "egreso_detalles.egreso_id")
+                ->where("egresos.categoria_id", $item->id)->orderBy("egresos.fecha", "asc");
+            if ($concepto_id != 'todos') {
+                $egreso_detalles->where("egreso_detalles.concepto_id", $concepto_id);
+            }
+
+            if ($fecha_ini && $fecha_fin) {
+                $egreso_detalles->whereBetween("egresos.fecha", [$fecha_ini, $fecha_fin]);
+            }
+
+            $egreso_detalles = $egreso_detalles->get();
+            foreach ($egreso_detalles as $value) {
+                $html .= '<tr>';
+                $html .= '<td>' . $value->concepto->nombre . '</td>';
+                $html .= '<td>' . $value->descripcion . '</td>';
+                $html .= '<td>' . $value->egreso->fecha_t . '</td>';
+                $html .= '<td class="centreado">' . $value->cantidad . '</td>';
+                $html .= '<td class="centreado">' . $value->monto . '</td>';
+                $html .= '</tr>';
+                $total_cantidad += (float)$value->cantidad;
+                $total_monto += (float)$value->monto;
+            }
+        }
+        $html .= '<tr>';
+        $html .= '<td colspan="3" class="derecha bold">TOTAL</td>';
+        $html .= '<td class="centreado bold">' . $total_cantidad . '</td>';
+        $html .= '<td class="centreado bold">' . $total_monto . '</td>';
+        $html .= '</tr>';
+
+        $pdf = PDF::loadView('reportes.egresos', compact('egresos', 'html'))->setPaper('legal', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('egresos.pdf');
+    }
+    public function presupuestos()
+    {
+        return Inertia::render("Reportes/Usuarios");
+    }
+    public function r_presupuestos(Request $request)
+    {
+    }
+    public function ganancias()
+    {
+        return Inertia::render("Reportes/Usuarios");
+    }
+    public function r_ganancias(Request $request)
+    {
+    }
+    public function movimientos()
+    {
+        return Inertia::render("Reportes/Usuarios");
+    }
+    public function r_movimientos(Request $request)
+    {
+    }
+    public function rg_movimientos()
+    {
     }
 }

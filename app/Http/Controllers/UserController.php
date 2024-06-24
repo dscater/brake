@@ -48,6 +48,11 @@ class UserController extends Controller
             "egresos.destroy",
 
             "reportes.usuarios",
+            "reportes.ingresos",
+            "reportes.egresos",
+            "reportes.presupuestos",
+            "reportes.ganancias",
+            "reportes.movimientos",
         ],
         "OPERADOR" => [],
     ];

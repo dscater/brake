@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 20-06-2024 a las 15:56:04
+-- Tiempo de generación: 24-06-2024 a las 19:11:57
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.1.10
 
@@ -69,7 +69,10 @@ CREATE TABLE `conceptos` (
 
 INSERT INTO `conceptos` (`id`, `categoria_id`, `nombre`, `descripcion`, `fecha_registro`, `created_at`, `updated_at`) VALUES
 (1, 1, 'CONCEPTO #1', 'DESC. CONCEPTO 1', '2024-06-19', '2024-06-19 15:49:17', '2024-06-19 15:50:25'),
-(2, 2, 'CONCEPTO #2', 'DESC CONCEPTO 2', '2024-06-19', '2024-06-19 15:52:01', '2024-06-19 15:52:01');
+(2, 2, 'CONCEPTO #2', 'DESC CONCEPTO 2', '2024-06-19', '2024-06-19 15:52:01', '2024-06-19 15:52:01'),
+(3, 3, 'CONCEPTO #3', '', '2024-06-24', '2024-06-24 17:59:37', '2024-06-24 17:59:37'),
+(4, 4, 'CONCEPTO 4', '', '2024-06-24', '2024-06-24 17:59:45', '2024-06-24 17:59:45'),
+(5, 1, 'CONCEPTO #6', '', '2024-06-24', '2024-06-24 18:00:16', '2024-06-24 18:00:16');
 
 -- --------------------------------------------------------
 
@@ -98,7 +101,7 @@ CREATE TABLE `configuracions` (
 --
 
 INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `razon_social`, `ciudad`, `dir`, `fono`, `correo`, `web`, `actividad`, `logo`, `created_at`, `updated_at`) VALUES
-(1, 'BRAKE', 'BK', 'BRAKE S.A.', 'LA PAZ', 'LOS OLIVOS', '7777777', 'BRAKE@GMAIL.COM', 'BRAKE.COM', 'ACTIVIDAD', '1716506212_1.jpg', NULL, '2024-05-23 23:16:52');
+(1, 'BRAKE', 'BK', 'BRAKE S.A.', 'LA PAZ', 'LOS OLIVOS', '7777777', 'BRAKE@GMAIL.COM', 'BRAKE.COM', 'ACTIVIDAD', '1716506212_1.jpg', NULL, '2024-06-24 17:57:19');
 
 -- --------------------------------------------------------
 
@@ -191,7 +194,13 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (18, 1, 'MODIFICACIÓN', 'EL USUARIO  MODIFICÓ UN INGRESO ECONÓMICO', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', 'INGRESO ECONÓMICOS', '2024-06-20', '11:28:22', '2024-06-20 15:28:22', '2024-06-20 15:28:22'),
 (19, 1, 'ELIMINACIÓN', 'EL USUARIO  ELIMINÓ UN INGRESO ECONÓMICO', 'id: 2<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:18:24<br/>updated_at: 2024-06-20 11:18:24<br/>', NULL, 'INGRESO ECONÓMICOS', '2024-06-20', '11:28:54', '2024-06-20 15:28:54', '2024-06-20 15:28:54'),
 (20, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN INGRESO ECONÓMICO', 'id: 1<br/>fecha: 2024-06-20<br/>categoria_id: 1<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:29:23<br/>updated_at: 2024-06-20 11:29:23<br/>', NULL, 'INGRESO ECONÓMICOS', '2024-06-20', '11:29:23', '2024-06-20 15:29:23', '2024-06-20 15:29:23'),
-(21, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN EGRESO ECONÓMICO', 'id: 1<br/>fecha: 2024-06-20<br/>categoria_id: 2<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:55:26<br/>updated_at: 2024-06-20 11:55:26<br/>', NULL, 'EGRESO ECONÓMICOS', '2024-06-20', '11:55:26', '2024-06-20 15:55:26', '2024-06-20 15:55:26');
+(21, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN EGRESO ECONÓMICO', 'id: 1<br/>fecha: 2024-06-20<br/>categoria_id: 2<br/>fecha_registro: 2024-06-20<br/>created_at: 2024-06-20 11:55:26<br/>updated_at: 2024-06-20 11:55:26<br/>', NULL, 'EGRESO ECONÓMICOS', '2024-06-20', '11:55:26', '2024-06-20 15:55:26', '2024-06-20 15:55:26'),
+(22, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 2<br/>usuario: JPERES<br/>password: $2y$12$6ZebcD12TFgENacNcyLmC.buP0KZlyW7gqfG.wD5/fI6T7JzJ4X6S<br/>nombre: JUAN<br/>paterno: PERES<br/>materno: MAMANI<br/>ci: 1111<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: JUAN@GMAIL.COM<br/>fono: 77777777<br/>tipo: OPERADOR<br/>foto: 1719251944_JPERES.jpg<br/>acceso: 1<br/>fecha_registro: 2024-06-24 00:00:00<br/>created_at: 2024-06-24 13:59:04<br/>updated_at: 2024-06-24 13:59:04<br/>', NULL, 'USUARIOS', '2024-06-24', '13:59:04', '2024-06-24 17:59:04', '2024-06-24 17:59:04'),
+(23, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 2<br/>usuario: JPERES<br/>password: $2y$12$6ZebcD12TFgENacNcyLmC.buP0KZlyW7gqfG.wD5/fI6T7JzJ4X6S<br/>nombre: JUAN<br/>paterno: PERES<br/>materno: MAMANI<br/>ci: 1111<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: JUAN@GMAIL.COM<br/>fono: 77777777<br/>tipo: OPERADOR<br/>foto: 1719251944_JPERES.jpg<br/>acceso: 1<br/>fecha_registro: 2024-06-24 00:00:00<br/>created_at: 2024-06-24 13:59:04<br/>updated_at: 2024-06-24 13:59:04<br/>', 'id: 2<br/>usuario: JPERES<br/>password: $2y$12$6ZebcD12TFgENacNcyLmC.buP0KZlyW7gqfG.wD5/fI6T7JzJ4X6S<br/>nombre: JUAN<br/>paterno: PERES<br/>materno: MAMANI<br/>ci: 1111<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: JUAN@GMAIL.COM<br/>fono: 77777777<br/>tipo: OPERADOR<br/>foto: 1719251944_JPERES.jpg<br/>acceso: 1<br/>fecha_registro: 2024-06-24 00:00:00<br/>created_at: 2024-06-24 13:59:04<br/>updated_at: 2024-06-24 13:59:04<br/>', 'USUARIOS', '2024-06-24', '13:59:08', '2024-06-24 17:59:08', '2024-06-24 17:59:08'),
+(24, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN CONCEPTO', 'id: 3<br/>categoria_id: 3<br/>nombre: CONCEPTO #3<br/>descripcion: <br/>fecha_registro: 2024-06-24<br/>created_at: 2024-06-24 13:59:37<br/>updated_at: 2024-06-24 13:59:37<br/>', NULL, 'CONCEPTOS', '2024-06-24', '13:59:37', '2024-06-24 17:59:37', '2024-06-24 17:59:37'),
+(25, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN CONCEPTO', 'id: 4<br/>categoria_id: 4<br/>nombre: CONCEPTO 4<br/>descripcion: <br/>fecha_registro: 2024-06-24<br/>created_at: 2024-06-24 13:59:45<br/>updated_at: 2024-06-24 13:59:45<br/>', NULL, 'CONCEPTOS', '2024-06-24', '13:59:45', '2024-06-24 17:59:45', '2024-06-24 17:59:45'),
+(26, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN CONCEPTO', 'id: 5<br/>categoria_id: 1<br/>nombre: CONCEPTO #6<br/>descripcion: <br/>fecha_registro: 2024-06-24<br/>created_at: 2024-06-24 14:00:16<br/>updated_at: 2024-06-24 14:00:16<br/>', NULL, 'CONCEPTOS', '2024-06-24', '14:00:16', '2024-06-24 18:00:16', '2024-06-24 18:00:16'),
+(27, 1, 'CREACIÓN', 'EL USUARIO  REGISTRO UN INGRESO ECONÓMICO', 'id: 2<br/>fecha: 2024-06-24<br/>categoria_id: 1<br/>fecha_registro: 2024-06-24<br/>created_at: 2024-06-24 14:00:43<br/>updated_at: 2024-06-24 14:00:43<br/>', NULL, 'INGRESO ECONÓMICOS', '2024-06-24', '14:00:43', '2024-06-24 18:00:43', '2024-06-24 18:00:43');
 
 -- --------------------------------------------------------
 
@@ -213,7 +222,8 @@ CREATE TABLE `ingresos` (
 --
 
 INSERT INTO `ingresos` (`id`, `fecha`, `categoria_id`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, '2024-06-20', 1, '2024-06-20', '2024-06-20 15:29:23', '2024-06-20 15:29:23');
+(1, '2024-06-20', 1, '2024-06-20', '2024-06-20 15:29:23', '2024-06-20 15:29:23'),
+(2, '2024-06-24', 1, '2024-06-24', '2024-06-24 18:00:43', '2024-06-24 18:00:43');
 
 -- --------------------------------------------------------
 
@@ -237,7 +247,9 @@ CREATE TABLE `ingreso_detalles` (
 --
 
 INSERT INTO `ingreso_detalles` (`id`, `ingreso_id`, `concepto_id`, `descripcion`, `cantidad`, `monto`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 'DESC. DETALLE', 100.00, 100000.00, '2024-06-20 15:29:23', '2024-06-20 15:29:23');
+(1, 1, 1, 'DESC. DETALLE', 100.00, 100000.00, '2024-06-20 15:29:23', '2024-06-20 15:29:23'),
+(2, 2, 1, 'DESC', 3.00, 3500.00, '2024-06-24 18:00:43', '2024-06-24 18:00:43'),
+(3, 2, 5, '', 10.00, 9400.00, '2024-06-24 18:00:43', '2024-06-24 18:00:43');
 
 -- --------------------------------------------------------
 
@@ -270,7 +282,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `usuario`, `password`, `nombre`, `paterno`, `materno`, `ci`, `ci_exp`, `dir`, `email`, `fono`, `tipo`, `foto`, `acceso`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', 'admin', NULL, NULL, '0', '', '', 'admin@gmail.com', '', 'GERENTE', NULL, 1, '2024-01-31', NULL, NULL);
+(1, 'admin', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', 'admin', NULL, NULL, '0', '', '', 'admin@gmail.com', '', 'GERENTE', NULL, 1, '2024-01-31', NULL, NULL),
+(2, 'JPERES', '$2y$12$6ZebcD12TFgENacNcyLmC.buP0KZlyW7gqfG.wD5/fI6T7JzJ4X6S', 'JUAN', 'PERES', 'MAMANI', '1111', 'LP', 'LOS OLIVOS', 'JUAN@GMAIL.COM', '77777777', 'OPERADOR', '1719251944_JPERES.jpg', 1, '2024-06-24', '2024-06-24 17:59:04', '2024-06-24 17:59:04');
 
 --
 -- Índices para tablas volcadas
@@ -352,7 +365,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `conceptos`
 --
 ALTER TABLE `conceptos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `configuracions`
@@ -376,25 +389,25 @@ ALTER TABLE `egreso_detalles`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
 --
 ALTER TABLE `ingresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas

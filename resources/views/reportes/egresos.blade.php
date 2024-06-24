@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Productos</title>
+    <title>Egresos Económicos</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -11,9 +11,9 @@
 
         @page {
             margin-top: 1.5cm;
-            margin-bottom: 0.3cm;
-            margin-left: 0.3cm;
-            margin-right: 0.3cm;
+            margin-bottom: 1.5cm;
+            margin-left: 2cm;
+            margin-right: 1.5cm;
         }
 
         table {
@@ -31,11 +31,11 @@
         }
 
         table thead tr th {
-            font-size: 7pt;
+            font-size: 8pt;
         }
 
         table tbody tr td {
-            font-size: 6pt;
+            font-size: 7.6pt;
         }
 
 
@@ -138,10 +138,25 @@
             color: white;
         }
 
-        .txt_rojo {}
+        .bold {
+            font-weight: bold;
+        }
 
         .img_celda img {
             width: 45px;
+        }
+
+        .texto_info {
+            font-size: 7.7pt;
+        }
+
+        .derecha {
+            text-align: right;
+        }
+
+        .subtitle {
+            background: rgb(241, 241, 241);
+            font-weight: bold;
         }
     </style>
 </head>
@@ -155,49 +170,20 @@
         <h2 class="titulo">
             {{ $configuracion->first()->razon_social }}
         </h2>
-        <h4 class="texto">LISTA DE PRODUCTOS</h4>
-        <h4 class="fecha">Expedido: {{ date('d-m-Y') }}</h4>
+        <h4 class="texto">EGRESOS ECONÓMICOS</h4>
     </div>
+
     <table border="1">
-        <thead class="bg-principal">
+        <thead>
             <tr>
-                <th width="3%">N°</th>
-                <th width="5%">CÓDIGO</th>
-                <th>NOMBRE</th>
-                <th>DESCRIPCIÓN</th>
-                <th>CATEGORÍA</th>
-                <th>TIPO DE PRODUCTO</th>
-                <th>STOCK MINÍMO</th>
-                <th>PRECIO</th>
-                <th>IMAGEN</th>
-                <th width="9%">FECHA DE REGISTRO</th>
+                <th>Categoría/Concepto</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Cantidad</th>
+                <th>Egreso</th>
             </tr>
         </thead>
-        <tbody>
-            @php
-                $cont = 1;
-            @endphp
-            @foreach ($productos as $producto)
-                <tr>
-                    <td class="centreado">{{ $cont++ }}</td>
-                    <td>{{ $producto->codigo }}</td>
-                    <td class="">{{ $producto->nombre }}</td>
-                    <td class="">{{ $producto->descripcion }}</td>
-                    <td class="">{{ $producto->categoria->nombre }}</td>
-                    <td class="">{{ $producto->tipo_producto->nombre }}</td>
-                    <td class="">{{ $producto->stock_minimo }}</td>
-                    <td class="">{{ $producto->precio }}</td>
-                    <td class="img_celda centreado">
-                        @if ($producto->url_imagen)
-                            <img src="{{ $producto->url_imagen }}" alt="Foto">
-                        @else
-                            S/I
-                        @endif
-                    </td>
-                    <td class="centreado">{{ $producto->fecha_registro_t }}</td>
-                </tr>
-            @endforeach
-        </tbody>
+        {!! $html !!}
     </table>
 </body>
 

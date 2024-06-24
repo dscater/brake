@@ -108,6 +108,22 @@ Route::middleware('auth')->group(function () {
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
+
+    Route::get('reportes/ingresos', [ReporteController::class, 'ingresos'])->name("reportes.ingresos");
+    Route::get('reportes/r_ingresos', [ReporteController::class, 'r_ingresos'])->name("reportes.r_ingresos");
+
+    Route::get('reportes/egresos', [ReporteController::class, 'egresos'])->name("reportes.egresos");
+    Route::get('reportes/r_egresos', [ReporteController::class, 'r_egresos'])->name("reportes.r_egresos");
+
+    Route::get('reportes/presupuestos', [ReporteController::class, 'presupuestos'])->name("reportes.presupuestos");
+    Route::get('reportes/r_presupuestos', [ReporteController::class, 'r_presupuestos'])->name("reportes.r_presupuestos");
+
+    Route::get('reportes/ganancias', [ReporteController::class, 'ganancias'])->name("reportes.ganancias");
+    Route::get('reportes/r_ganancias', [ReporteController::class, 'r_ganancias'])->name("reportes.r_ganancias");
+
+    Route::get('reportes/movimientos', [ReporteController::class, 'movimientos'])->name("reportes.movimientos");
+    Route::get('reportes/r_movimientos', [ReporteController::class, 'r_movimientos'])->name("reportes.r_movimientos");
+    Route::get('reportes/rg_movimientos', [ReporteController::class, 'rg_movimientos'])->name("reportes.rg_movimientos");
 });
 
 require __DIR__ . '/auth.php';
