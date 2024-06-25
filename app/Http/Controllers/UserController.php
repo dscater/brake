@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
+use App\Models\Egreso;
 use App\Models\Ingreso;
 use App\Models\Producto;
 use App\Models\Proveedor;
@@ -54,7 +55,33 @@ class UserController extends Controller
             "reportes.ganancias",
             "reportes.movimientos",
         ],
-        "OPERADOR" => [],
+        "OPERADOR" => [
+            "categorias.index",
+            "categorias.create",
+            "categorias.edit",
+            "categorias.destroy",
+
+            "conceptos.index",
+            "conceptos.create",
+            "conceptos.edit",
+            "conceptos.destroy",
+
+            "ingresos.index",
+            "ingresos.create",
+            "ingresos.edit",
+            "ingresos.destroy",
+
+            "egresos.index",
+            "egresos.create",
+            "egresos.edit",
+            "egresos.destroy",
+
+            "reportes.ingresos",
+            "reportes.egresos",
+            "reportes.presupuestos",
+            "reportes.ganancias",
+            "reportes.movimientos",
+        ],
     ];
 
     public static function getPermisosUser()
@@ -116,7 +143,7 @@ class UserController extends Controller
         if (in_array('ingresos.index', self::$permisos[$tipo])) {
             $array_infos[] = [
                 'label' => 'Ingresos Económicos',
-                'cantidad' => 0,
+                'cantidad' => count(Ingreso::all()),
                 'color' => 'bg-green-lighten-4',
                 'icon' => asset("imgs/documentos.png"),
                 "url" => "ingresos.index"
@@ -127,7 +154,7 @@ class UserController extends Controller
         if (in_array('egresos.index', self::$permisos[$tipo])) {
             $array_infos[] = [
                 'label' => 'Egresos Económicos',
-                'cantidad' => 0,
+                'cantidad' => count(Egreso::all()),
                 'color' => 'bg-red-lighten-4',
                 'icon' => asset("imgs/documentos.png"),
                 "url" => "egresos.index"
