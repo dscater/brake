@@ -94,7 +94,7 @@ class ReporteController extends Controller
                 $html .= '<td>' . $value->descripcion . '</td>';
                 $html .= '<td>' . $value->ingreso->fecha_t . '</td>';
                 $html .= '<td class="centreado">' . $value->cantidad . '</td>';
-                $html .= '<td class="centreado">' . $value->monto . '</td>';
+                $html .= '<td class="centreado">' . $value->monto_txt . '</td>';
                 $html .= '</tr>';
                 $total_cantidad += (float)$value->cantidad;
                 $total_monto += (float)$value->monto;
@@ -103,7 +103,7 @@ class ReporteController extends Controller
         $html .= '<tr>';
         $html .= '<td colspan="3" class="derecha bold">TOTAL</td>';
         $html .= '<td class="centreado bold">' . $total_cantidad . '</td>';
-        $html .= '<td class="centreado bold">' . $total_monto . '</td>';
+        $html .= '<td class="centreado bold">' . number_format($total_monto, 2, ".", ",") . '</td>';
         $html .= '</tr>';
 
         $pdf = PDF::loadView('reportes.ingresos', compact('ingresos', 'html'))->setPaper('legal', 'portrait');
@@ -161,7 +161,7 @@ class ReporteController extends Controller
                 $html .= '<td>' . $value->descripcion . '</td>';
                 $html .= '<td>' . $value->egreso->fecha_t . '</td>';
                 $html .= '<td class="centreado">' . $value->cantidad . '</td>';
-                $html .= '<td class="centreado">' . $value->monto . '</td>';
+                $html .= '<td class="centreado">' . $value->monto_txt . '</td>';
                 $html .= '</tr>';
                 $total_cantidad += (float)$value->cantidad;
                 $total_monto += (float)$value->monto;
@@ -170,7 +170,7 @@ class ReporteController extends Controller
         $html .= '<tr>';
         $html .= '<td colspan="3" class="derecha bold">TOTAL</td>';
         $html .= '<td class="centreado bold">' . $total_cantidad . '</td>';
-        $html .= '<td class="centreado bold">' . $total_monto . '</td>';
+        $html .= '<td class="centreado bold">' . number_format($total_monto, 2, ".", ",") . '</td>';
         $html .= '</tr>';
 
         $pdf = PDF::loadView('reportes.egresos', compact('egresos', 'html'))->setPaper('legal', 'portrait');
@@ -241,7 +241,7 @@ class ReporteController extends Controller
                     $html .= '<td>' . $value->descripcion . '</td>';
                     $html .= '<td>' . $value->egreso->fecha_t . '</td>';
                     $html .= '<td class="centreado">' . $value->cantidad . '</td>';
-                    $html .= '<td class="centreado">' . $value->monto . '</td>';
+                    $html .= '<td class="centreado">' . $value->monto_txt . '</td>';
                     $html .= '</tr>';
                     $total_cantidad += (float)$value->cantidad;
                     $total_monto += (float)$value->monto;
@@ -258,7 +258,7 @@ class ReporteController extends Controller
         $html .= '<tr>';
         $html .= '<td colspan="3" class="derecha bold">TOTAL</td>';
         $html .= '<td class="centreado bold">' . $total_cantidad . '</td>';
-        $html .= '<td class="centreado bold">' . $total_monto . '</td>';
+        $html .= '<td class="centreado bold">' . number_format($total_monto, 2, ".", ",") . '</td>';
         $html .= '</tr>';
 
         $pdf = PDF::loadView('reportes.presupuestos', compact('html', "fecha_ini", "fecha_fin"))->setPaper('legal', 'portrait');

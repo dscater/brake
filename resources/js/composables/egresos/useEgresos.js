@@ -11,6 +11,7 @@ const oEgreso = reactive({
     eliminados: reactive([]),
     total_c: 0,
     total_m: 0,
+    total_m_txt: "0.00",
     _method: "POST",
 });
 
@@ -133,6 +134,7 @@ export const useEgresos = () => {
             oEgreso.fecha_t = item.fecha_t;
             oEgreso.total_c = item.total_c;
             oEgreso.total_m = item.total_m;
+            oEgreso.total_m_txt = item.total_m_txt;
             oEgreso.categoria_id = item.categoria_id;
             if (concepto) {
                 oEgreso.concepto = item.concepto;
@@ -154,6 +156,7 @@ export const useEgresos = () => {
         oEgreso.categoria_id = null;
         oEgreso.total_c = 0;
         oEgreso.total_m = 0;
+        oEgreso.total_m_txt = "0.00";
         oEgreso.egreso_detalles = reactive([]);
         oEgreso.eliminados = reactive([]);
         oEgreso._method = "POST";

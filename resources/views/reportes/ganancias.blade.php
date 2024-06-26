@@ -214,7 +214,7 @@
                     <td>{{ $item->descripcion }}</td>
                     <td>{{ $item->fecha }}</td>
                     <td class="{{ $item->tipo }} centreado">{{ $item->cantidad }}</td>
-                    <td class="{{ $item->tipo }} centreado">{{ $item->monto }}</td>
+                    <td class="{{ $item->tipo }} centreado">{{ $item->monto_txt }}</td>
                 </tr>
                 @php
                     if ($item->tipo == 'ingreso') {
@@ -227,9 +227,12 @@
                 @endphp
             @endforeach
             <tr>
-                <td colspan="3" class="derecha bold text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">TOTAL {{ $total_final_m < 0 ? 'PERDIDAS' : 'GANANCIA NETA' }}</td>
-                <td class="bold centreado text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">{{ $total_final_c }}</td>
-                <td class="bold centreado text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">{{ $total_final_m }}</td>
+                <td colspan="3" class="derecha bold text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">TOTAL
+                    {{ $total_final_m < 0 ? 'PERDIDAS' : 'GANANCIA NETA' }}</td>
+                <td class="bold centreado text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">
+                    {{ $total_final_c }}</td>
+                <td class="bold centreado text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">
+                    {{ number_format($total_final_m, 2, '.', ',') }}</td>
             </tr>
         </tbody>
     </table>

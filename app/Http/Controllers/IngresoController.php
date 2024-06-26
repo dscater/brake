@@ -77,7 +77,11 @@ class IngresoController extends Controller
         DB::beginTransaction();
         try {
             // crear el Ingreso
-            $nuevo_ingreso = Ingreso::create(array_map('mb_strtoupper', $request->except(["ingreso_detalles", "eliminados"])));
+            $nuevo_ingreso = Ingreso::create([
+                "fecha" => $request->fecha,
+                "categoria_id" => $request->categoria_id,
+                "fecha_registro" => $request->fecha_registro
+            ]);
 
             foreach ($ingreso_detalles as $item) {
                 $nuevo_ingreso->ingreso_detalles()->create([
@@ -133,7 +137,10 @@ class IngresoController extends Controller
         DB::beginTransaction();
         try {
             $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
-            $ingreso->update(array_map('mb_strtoupper',  $request->except(["ingreso_detalles", "eliminados"])));
+            $ingreso->update([
+                "fecha" => $request->fecha,
+                "categoria_id" => $request->categoria_id
+            ]);
 
             if (isset($request->eliminados)) {
                 foreach ($request->eliminados as $value) {

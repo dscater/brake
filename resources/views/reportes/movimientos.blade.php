@@ -218,7 +218,7 @@
                     <td>{{ $item->descripcion }}</td>
                     <td>{{ $item->fecha }}</td>
                     <td class="{{ $item->tipo }} centreado">{{ $item->cantidad }}</td>
-                    <td class="{{ $item->tipo }} centreado">{{ $item->monto }}</td>
+                    <td class="{{ $item->tipo }} centreado">{{ $item->monto_txt }}</td>
                 </tr>
                 @php
                     if ($item->tipo == 'ingreso') {
@@ -240,7 +240,7 @@
                 <td class="bold centreado text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">
                     {{ $total_final_c }}</td>
                 <td class="bold centreado text-md {{ $total_final_m < 0 ? 'egreso' : 'ingreso' }}">
-                    {{ $total_final_m }}</td>
+                    {{ number_format($total_final_m, 2, '.', ',') }}</td>
             </tr>
         </tbody>
     </table>
@@ -269,19 +269,19 @@
         <tbody>
             <tr>
                 <td class="centreado">{{ $ti_c }}</td>
-                <td class="centreado">{{ number_format($ti_m, 2, '.', '') }}</td>
+                <td class="centreado">{{ number_format($ti_m, 2, '.', ',') }}</td>
                 <td class="centreado">{{ $te_c }}</td>
-                <td class="centreado">{{ number_format($te_m, 2, '.', '') }}</td>
+                <td class="centreado">{{ number_format($te_m, 2, '.', ',') }}</td>
                 @if ($total_final_m >= 0)
                     <td class="centreado">{{ $total_final_c }}</td>
-                    <td class="centreado">{{ number_format($total_final_m, 2, '.', '') }}</td>
+                    <td class="centreado">{{ number_format($total_final_m, 2, '.', ',') }}</td>
                     <td class="centreado">0</td>
                     <td class="centreado">0</td>
                 @else
                     <td class="centreado">0</td>
                     <td class="centreado">0</td>
                     <td class="centreado">{{ $total_final_c }}</td>
-                    <td class="centreado">{{ number_format($total_final_m, 2, '.', '') }}</td>
+                    <td class="centreado">{{ number_format($total_final_m, 2, '.', ',') }}</td>
                 @endif
             </tr>
         </tbody>

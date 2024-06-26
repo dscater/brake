@@ -76,7 +76,11 @@ class EgresoController extends Controller
         DB::beginTransaction();
         try {
             // crear el Egreso
-            $nuevo_egreso = Egreso::create(array_map('mb_strtoupper', $request->except(["egreso_detalles", "eliminados"])));
+            $nuevo_egreso = Egreso::create([
+                "fecha" => $request->fecha,
+                "categoria_id" => $request->categoria_id,
+                "fecha_registro" => $request->fecha_registro
+            ]);
 
             foreach ($egreso_detalles as $item) {
                 $nuevo_egreso->egreso_detalles()->create([
@@ -132,7 +136,10 @@ class EgresoController extends Controller
         DB::beginTransaction();
         try {
             $datos_original = HistorialAccion::getDetalleRegistro($egreso, "egresos");
-            $egreso->update(array_map('mb_strtoupper',  $request->except(["egreso_detalles", "eliminados"])));
+            $egreso->update([
+                "fecha" => $request->fecha,
+                "categoria_id" => $request->categoria_id,
+            ]);
 
             if (isset($request->eliminados)) {
                 foreach ($request->eliminados as $value) {

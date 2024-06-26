@@ -11,6 +11,7 @@ const oIngreso = reactive({
     eliminados: reactive([]),
     total_c: 0,
     total_m: 0,
+    total_m_txt: "0.00",
     _method: "POST",
 });
 
@@ -133,6 +134,7 @@ export const useIngresos = () => {
             oIngreso.fecha_t = item.fecha_t;
             oIngreso.total_c = item.total_c;
             oIngreso.total_m = item.total_m;
+            oIngreso.total_m_txt = item.total_m_txt;
             oIngreso.categoria_id = item.categoria_id;
             if (concepto) {
                 oIngreso.concepto = item.concepto;
@@ -154,6 +156,7 @@ export const useIngresos = () => {
         oIngreso.categoria_id = null;
         oIngreso.total_c = 0;
         oIngreso.total_m = 0;
+        oIngreso.total_m_txt = "0.00";
         oIngreso.ingreso_detalles = reactive([]);
         oIngreso.eliminados = reactive([]);
         oIngreso._method = "POST";

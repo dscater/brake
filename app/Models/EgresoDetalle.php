@@ -16,6 +16,13 @@ class EgresoDetalle extends Model
         "monto",
     ];
 
+    protected $appends = ["monto_txt"];
+
+    public function getMontoTxtAttribute()
+    {
+        return number_format($this->monto, 2, ".", ",");
+    }
+
     public function egreso()
     {
         return $this->belongsTo(Egreso::class, 'egreso_id');

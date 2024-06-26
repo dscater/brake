@@ -93,6 +93,7 @@ const calcula_totales = () => {
     );
     form.total_c = total_cantidad;
     form.total_m = total_monto;
+    form.total_m_txt = formatearMontos(parseFloat(form.total_m));
 };
 
 const agregarEgresoDetalle = () => {
@@ -111,6 +112,7 @@ const agregarEgresoDetalle = () => {
             descripcion: descripcion.value,
             cantidad: cantidad.value,
             monto: monto.value,
+            monto_txt: formatearMontos(parseFloat(monto.value)),
         });
 
         concepto_id.value = null;
@@ -130,13 +132,19 @@ const agregarEgresoDetalle = () => {
     }
 };
 
+const formatearMontos = (valor) => {
+    return valor.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+};
+
 const quitarEgresoDetalle = (index, id) => {
     if (id != 0) {
         form.eliminados.push(id);
     }
     form.egreso_detalles.splice(index, 1);
     calcula_totales();
-    1;
 };
 
 const getConcepto = (id) => {
@@ -379,7 +387,7 @@ onMounted(() => {
                                             {{ item.cantidad }}
                                         </td>
                                         <td class="text-center">
-                                            {{ item.monto }}
+                                            {{ item.monto_txt }}
                                         </td>
                                         <td class="text-right">
                                             <v-btn
@@ -412,7 +420,7 @@ onMounted(() => {
                                         <th
                                             class="text-center font-weight-bold"
                                         >
-                                            {{ form.total_m }}
+                                            {{ form.total_m_txt }}
                                         </th>
                                         <th></th>
                                     </tr>

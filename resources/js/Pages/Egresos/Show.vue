@@ -96,7 +96,7 @@ onMounted(() => {
                                         {{ item_detalle.cantidad }}
                                     </td>
                                     <td class="text-center">
-                                        {{ item_detalle.monto }}
+                                        {{ item_detalle.monto_txt }}
                                     </td>
                                 </tr>
                             </tbody>
@@ -113,7 +113,7 @@ onMounted(() => {
                                         {{ oEgreso.total_c }}
                                     </th>
                                     <th class="text-center font-weight-bold">
-                                        {{ oEgreso.total_m }}
+                                        {{ oEgreso.total_m_txt }}
                                     </th>
                                     <th></th>
                                 </tr>

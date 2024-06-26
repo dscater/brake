@@ -17,6 +17,13 @@ class IngresoDetalle extends Model
         "monto",
     ];
 
+    protected $appends = ["monto_txt"];
+
+    public function getMontoTxtAttribute()
+    {
+        return number_format($this->monto, 2, ".", ",");
+    }
+
     public function ingreso()
     {
         return $this->belongsTo(Ingreso::class, 'ingreso_id');

@@ -177,16 +177,57 @@ const generarReporteGraf = async () => {
                             borderWidth: 0,
                             dataLabels: {
                                 enabled: true,
-                                format: "{point.y:.2f}",
+                                formatter: function () {
+                                    if (this.series.name === "Monto") {
+                                        return Highcharts.numberFormat(
+                                            this.y,
+                                            2,
+                                            ".",
+                                            ","
+                                        );
+                                    } else {
+                                        return this.y;
+                                    }
+                                },
                             },
                         },
                     },
 
                     tooltip: {
-                        headerFormat:
-                            '<span style="font-size:11px">{point.key}</span><br>',
-                        pointFormat:
-                            '<span style="color:{point.color}">{series.name}</span>: <b>{point.y:.2f}</b><br/>',
+                        formatter: function () {
+                            var header =
+                                '<span style="font-size:11px">' +
+                                this.key +
+                                "</span><br>";
+                            if (this.series.name === "Monto") {
+                                return (
+                                    header +
+                                    '<span style="color:' +
+                                    this.point.color +
+                                    '">' +
+                                    this.series.name +
+                                    "</span>: <b>" +
+                                    Highcharts.numberFormat(
+                                        this.point.y,
+                                        2,
+                                        ".",
+                                        ","
+                                    ) +
+                                    "</b><br/>"
+                                );
+                            } else {
+                                return (
+                                    header +
+                                    '<span style="color:' +
+                                    this.point.color +
+                                    '">' +
+                                    this.series.name +
+                                    "</span>: <b>" +
+                                    this.point.y +
+                                    "</b><br/>"
+                                );
+                            }
+                        },
                     },
 
                     series: response.data.series,

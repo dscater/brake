@@ -319,7 +319,7 @@ const verUbicación = async (item) => {};
                                                                 </td>
                                                                 <td>
                                                                     {{
-                                                                        item_detalle.monto
+                                                                        item_detalle.monto_txt
                                                                     }}
                                                                 </td>
                                                             </tr>
@@ -344,7 +344,7 @@ const verUbicación = async (item) => {};
                                                                     class="text-center font-weight-bold"
                                                                 >
                                                                     {{
-                                                                        item.total_m
+                                                                        item.total_m_txt
                                                                     }}
                                                                 </th>
                                                                 <th></th>
@@ -466,7 +466,7 @@ const verUbicación = async (item) => {};
                                                                     </td>
                                                                     <td>
                                                                         {{
-                                                                            item_detalle.monto
+                                                                            item_detalle.monto_txt
                                                                         }}
                                                                     </td>
                                                                 </tr>
@@ -491,7 +491,7 @@ const verUbicación = async (item) => {};
                                                                         class="text-center font-weight-bold"
                                                                     >
                                                                         {{
-                                                                            item.total_m
+                                                                            item.total_m_txt
                                                                         }}
                                                                     </th>
                                                                     <th></th>

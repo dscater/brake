@@ -15,7 +15,7 @@ class Ingreso extends Model
         "fecha_registro",
     ];
 
-    protected $appends = ["fecha_t", "fecha_registro_t", "total_c", "total_m"];
+    protected $appends = ["fecha_t", "fecha_registro_t", "total_c", "total_m", "total_m_txt"];
 
     public function getTotalCAttribute()
     {
@@ -26,6 +26,12 @@ class Ingreso extends Model
     {
         $total = IngresoDetalle::where("ingreso_id", $this->id)->sum("monto");
         return $total;
+    }
+
+    public function getTotalMTxtAttribute()
+    {
+        $total = IngresoDetalle::where("ingreso_id", $this->id)->sum("monto");
+        return number_format($total, 2, ".", ",");
     }
 
     public function getFechaTAttribute()
