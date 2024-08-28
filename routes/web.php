@@ -5,9 +5,13 @@ use App\Http\Controllers\ConceptoController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\EgresoController;
 use App\Http\Controllers\IngresoController;
+use App\Http\Controllers\IngresoProductoController;
 use App\Http\Controllers\InicioController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\SalidaProductoController;
+use App\Http\Controllers\TipoProductoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Auth;
@@ -105,6 +109,35 @@ Route::middleware('auth')->group(function () {
         ["index", "create", "store", "edit", "update", "show", "destroy"]
     );
 
+    // TIPO DE PRODUCTOS
+    Route::get("/tipo_productos/paginado", [TipoProductoController::class, 'paginado'])->name("tipo_productos.paginado");
+    Route::get("/tipo_productos/listado", [TipoProductoController::class, 'listado'])->name("tipo_productos.listado");
+    Route::resource("tipo_productos", TipoProductoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // PRODUCTOS
+    Route::get("/productos/byTipoProducto", [ProductoController::class, 'byTipoProducto'])->name("productos.byTipoProducto");
+    Route::get("/productos/paginado", [ProductoController::class, 'paginado'])->name("productos.paginado");
+    Route::get("/productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
+    Route::resource("productos", ProductoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // INGRESO DE PRODUCTOS
+    Route::get("/ingreso_productos/paginado", [IngresoProductoController::class, 'paginado'])->name("ingreso_productos.paginado");
+    Route::get("/ingreso_productos/listado", [IngresoProductoController::class, 'listado'])->name("ingreso_productos.listado");
+    Route::resource("ingreso_productos", IngresoProductoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // SALIDA DE PRODUCTOS
+    Route::get("/salida_productos/paginado", [SalidaProductoController::class, 'paginado'])->name("salida_productos.paginado");
+    Route::get("/salida_productos/listado", [SalidaProductoController::class, 'listado'])->name("salida_productos.listado");
+    Route::resource("salida_productos", SalidaProductoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
@@ -124,6 +157,19 @@ Route::middleware('auth')->group(function () {
     Route::get('reportes/movimientos', [ReporteController::class, 'movimientos'])->name("reportes.movimientos");
     Route::get('reportes/r_movimientos', [ReporteController::class, 'r_movimientos'])->name("reportes.r_movimientos");
     Route::get('reportes/rg_movimientos', [ReporteController::class, 'rg_movimientos'])->name("reportes.rg_movimientos");
+    
+    Route::get('reportes/productos', [ReporteController::class, 'productos'])->name("reportes.productos");
+    Route::get('reportes/r_productos', [ReporteController::class, 'r_productos'])->name("reportes.r_productos");
+    
+    Route::get('reportes/ingreso_productos', [ReporteController::class, 'ingreso_productos'])->name("reportes.ingreso_productos");
+    Route::get('reportes/r_ingreso_productos', [ReporteController::class, 'r_ingreso_productos'])->name("reportes.r_ingreso_productos");
+    
+    Route::get('reportes/salida_productos', [ReporteController::class, 'salida_productos'])->name("reportes.salida_productos");
+    Route::get('reportes/r_salida_productos', [ReporteController::class, 'r_salida_productos'])->name("reportes.r_salida_productos");
+    
+    Route::get('reportes/kardex_productos', [ReporteController::class, 'kardex_productos'])->name("reportes.kardex_productos");
+    Route::get('reportes/r_kardex_productos', [ReporteController::class, 'r_kardex_productos'])->name("reportes.r_kardex_productos");
+    Route::get('reportes/rg_kardex_productos', [ReporteController::class, 'rg_kardex_productos'])->name("reportes.rg_kardex_productos");
 });
 
 require __DIR__ . '/auth.php';

@@ -51,12 +51,20 @@ const existe_validacion_fechas = ref(false);
 
 const rules_fechas = ref([
     (value) => {
-        if (value) {
-            existe_validacion_fechas.value = false;
-            return true;
+        if (!value) {
+            existe_validacion_fechas.value = true;
+            return "Debes seleccionar una fecha";
         }
-        existe_validacion_fechas.value = true;
-        return "Debes seleccionar una fecha";
+        const fechaSeleccionada = new Date(value);
+        const fechaActual = new Date();
+
+        if (fechaSeleccionada > fechaActual) {
+            existe_validacion_fechas.value = true;
+            return "La fecha no puede ser mayor a la fecha actual";
+        }
+
+        existe_validacion_fechas.value = false;
+        return true;
     },
 ]);
 

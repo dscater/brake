@@ -8,9 +8,11 @@ use App\Models\EgresoDetalle;
 use App\Models\Ingreso;
 use App\Models\Salida;
 use App\Models\IngresoDetalle;
+use App\Models\IngresoProducto;
 use App\Models\KardexProducto;
 use App\Models\SalidaDetalle;
 use App\Models\Producto;
+use App\Models\SalidaProducto;
 use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
@@ -420,6 +422,191 @@ class ReporteController extends Controller
         return response()->JSON([
             "categories" => $categories,
             "series" => $series,
+        ]);
+    }
+    public function productos()
+    {
+        return Inertia::render("Reportes/Productos");
+    }
+
+    public function r_productos(Request $request)
+    {
+        $producto_id =  $request->producto_id;
+        $productos = Producto::all();
+
+        if ($producto_id != 'TODOS') {
+            $request->validate([
+                'producto_id' => 'required',
+            ]);
+            $productos = Producto::where('id', $request->producto_id)->orderBy("nombre", "ASC")->get();
+        }
+
+        $pdf = PDF::loadView('reportes.productos', compact('productos'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('productos.pdf');
+    }
+    public function ingreso_productos()
+    {
+        return Inertia::render("Reportes/IngresoProductos");
+    }
+
+    public function r_ingreso_productos(Request $request)
+    {
+        $tipo_producto_id =  $request->tipo_producto_id;
+        $producto_id =  $request->producto_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $ingreso_productos = IngresoProducto::select("ingreso_productos.*");
+
+        if ($tipo_producto_id && $tipo_producto_id != 'todos') {
+            $ingreso_productos->where("tipo_producto_id", $tipo_producto_id);
+        }
+
+        if ($producto_id && $producto_id != 'todos') {
+            $ingreso_productos->where("producto_id", $producto_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $ingreso_productos->whereBetween("fecha_ingreso", [$fecha_ini, $fecha_fin]);
+        }
+
+        $ingreso_productos = $ingreso_productos->orderBy("fecha_ingreso", "asc")->get();
+
+        $pdf = PDF::loadView('reportes.ingreso_productos', compact('ingreso_productos'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('ingreso_productos.pdf');
+    }
+    public function salida_productos()
+    {
+        return Inertia::render("Reportes/SalidaProductos");
+    }
+
+    public function r_salida_productos(Request $request)
+    {
+        $tipo_producto_id =  $request->tipo_producto_id;
+        $producto_id =  $request->producto_id;
+        $fecha_ini =  $request->fecha_ini;
+        $fecha_fin =  $request->fecha_fin;
+        $salida_productos = SalidaProducto::select("salida_productos.*");
+
+        if ($tipo_producto_id && $tipo_producto_id != 'todos') {
+            $salida_productos->where("tipo_producto_id", $tipo_producto_id);
+        }
+
+        if ($producto_id && $producto_id != 'todos') {
+            $salida_productos->where("producto_id", $producto_id);
+        }
+
+        if ($fecha_ini && $fecha_fin) {
+            $salida_productos->whereBetween("fecha_salida", [$fecha_ini, $fecha_fin]);
+        }
+
+        $salida_productos = $salida_productos->orderBy("fecha_salida", "asc")->get();
+
+        $pdf = PDF::loadView('reportes.salida_productos', compact('salida_productos'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('salida_productos.pdf');
+    }
+    public function kardex_productos()
+    {
+        return Inertia::render("Reportes/KardexProductos");
+    }
+
+    public function r_kardex_productos(Request $request)
+    {
+        $tipo_producto_id = $request->tipo_producto_id;
+        $producto_id = $request->producto_id;
+
+
+        $productos = Producto::select("productos.*");
+        if ($tipo_producto_id != 'todos') {
+            $productos->where("tipo_producto_id", $tipo_producto_id);
+        }
+        if ($producto_id != 'todos') {
+            $productos->where("id", $producto_id);
+        }
+        $productos = $productos->get();
+
+        $array_kardex = [];
+        $array_saldo_anterior = [];
+        foreach ($productos as $registro) {
+            $kardex = KardexProducto::where('producto_id', $registro->id)->get();
+            $array_saldo_anterior[$registro->id] = [
+                'sw' => false,
+                'saldo_anterior' => []
+            ];
+            $array_kardex[$registro->id] = $kardex;
+        }
+
+        $pdf = PDF::loadView('reportes.kardex_productos', compact('productos', 'array_kardex', 'array_saldo_anterior'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('kardex_productos.pdf');
+    }
+
+    public function rg_kardex_productos(Request $request)
+    {
+        $tipo_producto_id = $request->tipo_producto_id;
+        $producto_id = $request->producto_id;
+
+
+        $productos = Producto::select("productos.*");
+        if ($tipo_producto_id != 'todos') {
+            $productos->where("tipo_producto_id", $tipo_producto_id);
+        }
+        if ($producto_id != 'todos') {
+            $productos->where("id", $producto_id);
+        }
+        $productos = $productos->get();
+
+        $data1 = [];
+
+        foreach ($productos as $producto) {
+            $data1[] = [$producto->nombre, (float)$producto->stock_actual];
+        }
+
+        $data2 = [];
+
+        foreach ($productos as $producto) {
+            $valor = (float)$producto->stock_actual * (float)$producto->precio;
+            $valor = round($valor, 2);
+            $data2[] = [$producto->nombre, (float)$valor];
+        }
+
+        return response()->JSON([
+            "data1" => $data1,
+            "data2" => $data2,
         ]);
     }
 }

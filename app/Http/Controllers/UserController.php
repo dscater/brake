@@ -48,12 +48,36 @@ class UserController extends Controller
             "egresos.edit",
             "egresos.destroy",
 
+            "tipo_productos.index",
+            "tipo_productos.create",
+            "tipo_productos.edit",
+            "tipo_productos.destroy",
+
+            "productos.index",
+            "productos.create",
+            "productos.edit",
+            "productos.destroy",
+
+            "ingreso_productos.index",
+            "ingreso_productos.create",
+            "ingreso_productos.edit",
+            "ingreso_productos.destroy",
+
+            "salida_productos.index",
+            "salida_productos.create",
+            "salida_productos.edit",
+            "salida_productos.destroy",
+
             "reportes.usuarios",
             "reportes.ingresos",
             "reportes.egresos",
             "reportes.presupuestos",
             "reportes.ganancias",
             "reportes.movimientos",
+            "reportes.productos",
+            "reportes.ingreso_productos",
+            "reportes.salida_productos",
+            "reportes.kardex_productos",
         ],
         "OPERADOR" => [
             "categorias.index",
@@ -76,11 +100,35 @@ class UserController extends Controller
             "egresos.edit",
             "egresos.destroy",
 
+            "tipo_productos.index",
+            "tipo_productos.create",
+            "tipo_productos.edit",
+            "tipo_productos.destroy",
+
+            "productos.index",
+            "productos.create",
+            "productos.edit",
+            "productos.destroy",
+
+            "ingreso_productos.index",
+            "ingreso_productos.create",
+            "ingreso_productos.edit",
+            "ingreso_productos.destroy",
+
+            "salida_productos.index",
+            "salida_productos.create",
+            "salida_productos.edit",
+            "salida_productos.destroy",
+
             "reportes.ingresos",
             "reportes.egresos",
             "reportes.presupuestos",
             "reportes.ganancias",
             "reportes.movimientos",
+            "reportes.productos",
+            "reportes.ingreso_productos",
+            "reportes.salida_productos",
+            "reportes.kardex_productos",
         ],
     ];
 

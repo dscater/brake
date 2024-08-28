@@ -7,7 +7,7 @@ const breadbrums = [
         name_url: "inicio",
     },
     {
-        title: "Reporte Ingresos Económicos",
+        title: "Reporte Salida de Productos",
         disabled: false,
         url: "",
         name_url: "",
@@ -20,14 +20,16 @@ import BreadBrums from "@/Components/BreadBrums.vue";
 import { useApp } from "@/composables/useApp";
 import { computed, onMounted, ref } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
-import { useCategorias } from "@/composables/categorias/useCategorias";
+import { useTipoProductos } from "@/composables/tipo_productos/useTipoProductos";
+import { useProductos } from "@/composables/productos/useProductos";
 const { setLoading } = useApp();
 
-const { getCategorias } = useCategorias();
+const { getTipoProductos } = useTipoProductos();
+const { getProductos } = useProductos();
 
 const form = ref({
-    categoria_id: "todos",
-    concepto_id: "todos",
+    tipo_producto_id: "todos",
+    producto_id: "todos",
     fecha_ini: "",
     fecha_fin: "",
 });
@@ -53,15 +55,6 @@ const rules_fechas = ref([
     },
 ]);
 
-const rules_concepto = ref([
-    (value) => {
-        if (value) {
-            return true;
-        }
-        return "Debes seleccionar un concepto";
-    },
-]);
-
 const formulario = ref(null);
 
 const generando = ref(false);
@@ -72,47 +65,54 @@ const txtBtn = computed(() => {
     return "Generar Reporte";
 });
 
-const listCategorias = ref([]);
-const listConceptos = ref([]);
+const listTipoProductos = ref([]);
+const listProductos = ref([]);
 
-const cargarListas = async () => {
-    listCategorias.value = await getCategorias({ byTipo: "INGRESO" });
-    listCategorias.value.unshift({
-        id: "todos",
-        nombre: "TODOS",
-    });
-    listConceptos.value.unshift({
-        id: "todos",
-        nombre: "TODOS",
-    });
+const getProductosByTipoProducto = async (tipo_producto_id) => {
+    if (tipo_producto_id != "") {
+        if (tipo_producto_id != "todos") {
+            axios
+                .get(route("productos.byTipoProducto"), {
+                    params: {
+                        tipo_producto_id: tipo_producto_id,
+                    },
+                })
+                .then((response) => {
+                    listProductos.value = response.data.productos;
+                    listProductos.value.unshift({
+                        id: "todos",
+                        nombre: "TODOS",
+                    });
+                    form.value.producto_id = "todos";
+                });
+        } else {
+            listProductos.value = await getProductos();
+            listProductos.value.unshift({
+                id: "todos",
+                nombre: "TODOS",
+            });
+        }
+    }
 };
 
-const getConceptos = (categoria_id) => {
-    form.concepto_id = "todos";
-    listConceptos.value = [
-        {
-            id: "todos",
-            nombre: "TODOS",
-        },
-    ];
-    if (categoria_id != "") {
-        axios
-            .get(route("conceptos.byCategoria"), {
-                params: {
-                    categoria_id: categoria_id,
-                },
-            })
-            .then((response) => {
-                listConceptos.value = listConceptos.value.concat(response.data);
-            });
-    }
+const cargarListas = async () => {
+    listTipoProductos.value = await getTipoProductos();
+    listTipoProductos.value.unshift({
+        id: "todos",
+        nombre: "TODOS",
+    });
+    listProductos.value = await getProductos();
+    listProductos.value.unshift({
+        id: "todos",
+        nombre: "TODOS",
+    });
 };
 
 const generarReporte = async () => {
     const { valid } = await formulario.value.validate();
     if (valid) {
         generando.value = true;
-        const url = route("reportes.r_ingresos", form.value);
+        const url = route("reportes.r_salida_productos", form.value);
         window.open(url, "_blank");
         setTimeout(() => {
             generando.value = false;
@@ -129,7 +129,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head title="Reporte Ingresos Económicos"></Head>
+    <Head title="Reporte Salida de Productos"></Head>
     <v-container>
         <BreadBrums :breadbrums="breadbrums"></BreadBrums>
         <v-row>
@@ -142,61 +142,67 @@ onMounted(() => {
                                 ref="formulario"
                             >
                                 <v-row>
-                                    <v-col cols="12">
-                                        <v-select
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-autocomplete
                                             :hide-details="
-                                                form.errors?.categoria_id
+                                                form.errors?.tipo_producto_id
                                                     ? false
                                                     : true
                                             "
                                             :error="
-                                                form.errors?.categoria_id
+                                                form.errors?.tipo_producto_id
                                                     ? true
                                                     : false
                                             "
                                             :error-messages="
-                                                form.errors?.categoria_id
-                                                    ? form.errors?.categoria_id
+                                                form.errors?.tipo_producto_id
+                                                    ? form.errors
+                                                          ?.tipo_producto_id
                                                     : ''
                                             "
-                                            variant="outlined"
                                             density="compact"
-                                            required
-                                            :items="listCategorias"
+                                            variant="underlined"
+                                            color="primary"
+                                            no-data-text="Sin registros"
+                                            :items="listTipoProductos"
                                             item-value="id"
                                             item-title="nombre"
-                                            label="Categoría*"
-                                            @update:modelValue="getConceptos"
-                                            v-model="form.categoria_id"
-                                        ></v-select>
+                                            label="Seleccionar tipo de producto*"
+                                            v-model="form.tipo_producto_id"
+                                            @update:modelValue="
+                                                getProductosByTipoProducto
+                                            "
+                                            required
+                                        ></v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12">
-                                        <v-select
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-autocomplete
                                             :hide-details="
-                                                form.errors?.concepto_id
+                                                form.errors?.producto_id
                                                     ? false
                                                     : true
                                             "
                                             :error="
-                                                form.errors?.concepto_id
+                                                form.errors?.producto_id
                                                     ? true
                                                     : false
                                             "
                                             :error-messages="
-                                                form.errors?.concepto_id
-                                                    ? form.errors?.concepto_id
+                                                form.errors?.producto_id
+                                                    ? form.errors?.producto_id
                                                     : ''
                                             "
-                                            :rules="rules_concepto"
-                                            variant="outlined"
                                             density="compact"
-                                            required
-                                            :items="listConceptos"
+                                            variant="underlined"
+                                            color="primary"
+                                            no-data-text="Sin registros"
+                                            :items="listProductos"
                                             item-value="id"
                                             item-title="nombre"
-                                            label="Concepto*"
-                                            v-model="form.concepto_id"
-                                        ></v-select>
+                                            label="Seleccionar tipo de producto*"
+                                            v-model="form.producto_id"
+                                            required
+                                        ></v-autocomplete>
                                     </v-col>
                                     <v-col cols="12">
                                         <v-row>
@@ -221,7 +227,7 @@ onMounted(() => {
                                                     "
                                                     type="date"
                                                     variant="outlined"
-                                                    label="Fecha Inicio"
+                                                    label="Fecha Fin"
                                                     required
                                                     density="compact"
                                                     v-model="form.fecha_fin"
