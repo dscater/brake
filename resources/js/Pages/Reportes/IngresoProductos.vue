@@ -227,7 +227,7 @@ onMounted(() => {
                                                     "
                                                     type="date"
                                                     variant="outlined"
-                                                    label="Fecha Fin"
+                                                    label="Fecha Final"
                                                     required
                                                     density="compact"
                                                     v-model="form.fecha_fin"
