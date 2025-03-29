@@ -6,6 +6,7 @@ use App\Models\Concepto;
 use App\Models\EgresoDetalle;
 use App\Models\HistorialAccion;
 use App\Models\IngresoDetalle;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,11 @@ class ConceptoController extends Controller
         "nombre.required" => "Este campo es obligatorio",
         "nombre.min" => "Debes ingresar al menos :min caracteres",
     ];
+
+
+    private $modulo = "CONCEPTOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -74,16 +80,9 @@ class ConceptoController extends Controller
         try {
             // crear el Concepto
             $nuevo_concepto = Concepto::create(array_map('mb_strtoupper', $request->all()));
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_concepto, "conceptos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UN CONCEPTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'CONCEPTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN CONCEPTO", $nuevo_concepto);
 
             DB::commit();
             return redirect()->route("conceptos.index")->with("bien", "Registro realizado");
@@ -95,29 +94,17 @@ class ConceptoController extends Controller
         }
     }
 
-    public function show(Concepto $concepto)
-    {
-    }
+    public function show(Concepto $concepto) {}
 
     public function update(Concepto $concepto, Request $request)
     {
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($concepto, "conceptos");
+            $old_concepto = Concepto::find($concepto->id);
             $concepto->update(array_map('mb_strtoupper', $request->all()));
-
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($concepto, "conceptos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UN CONCEPTO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'CONCEPTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN CONCEPTO", $old_concepto, $concepto);
 
             DB::commit();
             return redirect()->route("conceptos.index")->with("bien", "Registro actualizado");
@@ -145,17 +132,12 @@ class ConceptoController extends Controller
                 ]);
             }
 
-            $datos_original = HistorialAccion::getDetalleRegistro($concepto, "conceptos");
+            $old_concepto = Concepto::find($concepto->id);
             $concepto->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UN CONCEPTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'CONCEPTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN CONCEPTO", $old_concepto);
+
             DB::commit();
             return response()->JSON([
                 'sw' => true,

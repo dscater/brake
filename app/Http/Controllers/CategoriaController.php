@@ -9,6 +9,7 @@ use App\Models\HistorialAccion;
 use App\Models\Ingreso;
 use App\Models\IngresoDetalle;
 use App\Models\Producto;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,10 @@ class CategoriaController extends Controller
         "nombre.required" => "Este campo es obligatorio",
         "nombre.min" => "Debes ingresar al menos :min caracteres",
     ];
+
+    private $modulo = "CATEGORÍAS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -72,16 +77,9 @@ class CategoriaController extends Controller
         try {
             // crear el Categoria
             $nuevo_categoria = Categoria::create(array_map('mb_strtoupper', $request->all()));
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_categoria, "categorias");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UNA CATEGORIA',
-                'datos_original' => $datos_original,
-                'modulo' => 'CATEGORIAS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA CATEGORÍA", $nuevo_categoria);
 
             DB::commit();
             return redirect()->route("categorias.index")->with("bien", "Registro realizado");
@@ -93,29 +91,17 @@ class CategoriaController extends Controller
         }
     }
 
-    public function show(Categoria $categoria)
-    {
-    }
+    public function show(Categoria $categoria) {}
 
     public function update(Categoria $categoria, Request $request)
     {
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($categoria, "categorias");
+            $old_categoria = Categoria::find($categoria->id);
             $categoria->update(array_map('mb_strtoupper', $request->all()));
-
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($categoria, "categorias");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UNA CATEGORIA',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'CATEGORIAS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA CATEGORÍA", $old_categoria, $categoria);
 
             DB::commit();
             return redirect()->route("categorias.index")->with("bien", "Registro actualizado");
@@ -149,17 +135,12 @@ class CategoriaController extends Controller
                 ]);
             }
 
-            $datos_original = HistorialAccion::getDetalleRegistro($categoria, "categorias");
+            $old_categoria = Categoria::find($categoria->id);
             $categoria->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UNA CATEGORIA',
-                'datos_original' => $datos_original,
-                'modulo' => 'CATEGORIAS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA CATEGORÍA", $old_categoria);
+
             DB::commit();
             return response()->JSON([
                 'sw' => true,

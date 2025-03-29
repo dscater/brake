@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\HistorialAccion;
 use App\Models\Obra;
 use App\Models\User;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,10 @@ class UsuarioController extends Controller
         "fono.min" => "Debes ingresar al menos :min caracteres",
         "tipo.required" => "Este campo es obligatorio",
     ];
+
+    private $modulo = "USUARIOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -124,16 +129,8 @@ class UsuarioController extends Controller
             }
             $nuevo_usuario->save();
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_usuario, "users");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' REGISTRO UN USUARIO',
-                'datos_original' => $datos_original,
-                'modulo' => 'USUARIOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN USUARIO", $nuevo_usuario);
 
             DB::commit();
             return redirect()->route("usuarios.index")->with("bien", "Registro realizado");
@@ -145,9 +142,7 @@ class UsuarioController extends Controller
         }
     }
 
-    public function show(User $user)
-    {
-    }
+    public function show(User $user) {}
 
     public function update(User $user, Request $request)
     {
@@ -158,7 +153,8 @@ class UsuarioController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
+            $old_user = clone $user;
+
             $user->update(array_map('mb_strtoupper', $request->except('foto')));
             if ($request->hasFile('foto')) {
                 $antiguo = $user->foto;
@@ -172,17 +168,8 @@ class UsuarioController extends Controller
             }
             $user->save();
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($user, "users");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' MODIFICÓ UN USUARIO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'USUARIOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN USUARIO", $old_user, $user);
 
 
             DB::commit();
@@ -203,22 +190,12 @@ class UsuarioController extends Controller
         ]);
         DB::beginTransaction();
         try {
+            $old_user = clone $user;
             $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
             $user->password = Hash::make($request->password);
             $user->save();
-
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($user, "users");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' MODIFICÓ UN LA CONTRASEÑA DE UN USUARIO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'USUARIOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
-
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ LA CONTRASEÑA DE UN USUARIOf", $old_user, $user);
 
             DB::commit();
             return redirect()->route("usuarios.index")->with("bien", "Registro actualizado");
@@ -235,34 +212,20 @@ class UsuarioController extends Controller
     {
         DB::beginTransaction();
         try {
-            $usos = Obra::where("gerente_regional_id", $user->id)->get();
-            if (count($usos) > 0) {
-                throw ValidationException::withMessages([
-                    'error' =>  "No es posible eliminar este registro porque esta siendo utilizado por otros registros",
-                ]);
-            }
-            $usos = Obra::where("encargado_obra_id", $user->id)->get();
-            if (count($usos) > 0) {
-                throw ValidationException::withMessages([
-                    'error' =>  "No es posible eliminar este registro porque esta siendo utilizado por otros registros",
-                ]);
-            }
+            $old_user = clone $user;
+
+            $user->historial_accions()->delete();
 
             $antiguo = $user->foto;
             if ($antiguo != 'default.png') {
                 \File::delete(public_path() . '/imgs/users/' . $antiguo);
             }
-            $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
+
             $user->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' ELIMINÓ UN USUARIO',
-                'datos_original' => $datos_original,
-                'modulo' => 'USUARIOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN USUARIO", $old_user);
+
             DB::commit();
             return response()->JSON([
                 'sw' => true,

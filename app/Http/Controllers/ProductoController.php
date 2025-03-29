@@ -6,6 +6,7 @@ use App\Models\HistorialAccion;
 use App\Models\IngresoProducto;
 use App\Models\KardexProducto;
 use App\Models\Producto;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -30,6 +31,10 @@ class ProductoController extends Controller
         "precio.required" => "Este campo es obligatorio",
         "precio.min" => "Debes ingresar al menos :min caracteres",
     ];
+
+    private $modulo = "PRODUCTOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -90,16 +95,9 @@ class ProductoController extends Controller
         try {
             // crear el Producto
             $nuevo_producto = Producto::create(array_map('mb_strtoupper', $request->all()));
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_producto, "productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UN PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN PRODUCTO", $nuevo_producto);
 
             DB::commit();
             return redirect()->route("productos.index")->with("bien", "Registro realizado");
@@ -118,20 +116,11 @@ class ProductoController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($producto, "productos");
+            $old_producto = clone $producto;
             $producto->update(array_map('mb_strtoupper', $request->all()));
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($producto, "productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UN PRODUCTO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN PRODUCTO", $old_producto, $producto);
 
             DB::commit();
             return redirect()->route("productos.index")->with("bien", "Registro actualizado");
@@ -159,17 +148,12 @@ class ProductoController extends Controller
                 ]);
             }
 
-            $datos_original = HistorialAccion::getDetalleRegistro($producto, "productos");
+            $old_producto = clone $producto;
             $producto->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UN PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN PRODUCTO", $old_producto);
+
             DB::commit();
             return response()->JSON([
                 'sw' => true,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\HistorialAccion;
 use App\Models\Ingreso;
 use App\Models\IngresoDetalle;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,11 @@ class IngresoController extends Controller
         "fecha.required" => "Este campo es obligatorio",
         "fecha.date" => "Debes ingresar una fecha valida",
     ];
+
+
+    private $modulo = "INGRESOS ECONÓMICOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -92,16 +98,8 @@ class IngresoController extends Controller
                 ]);
             }
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_ingreso, "ingresos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UN INGRESO ECONÓMICO',
-                'datos_original' => $datos_original,
-                'modulo' => 'INGRESO ECONÓMICOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN INGRESO", $nuevo_ingreso, null, ["ingreso_detalles"]);
 
             DB::commit();
             return redirect()->route("ingresos.index")->with("bien", "Registro realizado");
@@ -136,7 +134,8 @@ class IngresoController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
+            $old_ingreso = clone $ingreso;
+            $old_ingreso->load("ingreso_detalles");
             $ingreso->update([
                 "fecha" => $request->fecha,
                 "categoria_id" => $request->categoria_id
@@ -160,17 +159,8 @@ class IngresoController extends Controller
                 }
             }
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UN INGRESO ECONÓMICO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'INGRESO ECONÓMICOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN INGRESO", $old_ingreso, $ingreso, ["ingreso_detalles"]);
 
             DB::commit();
             return redirect()->route("ingresos.index")->with("bien", "Registro actualizado");
@@ -185,18 +175,14 @@ class IngresoController extends Controller
     {
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
+            $old_ingreso = clone $ingreso;
+            $old_ingreso->load("ingreso_detalles");
+            
             $ingreso->ingreso_detalles()->delete();
             $ingreso->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UN INGRESO ECONÓMICO',
-                'datos_original' => $datos_original,
-                'modulo' => 'INGRESO ECONÓMICOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN INGRESO", $old_ingreso, null, ["ingreso_detalles"]);
             DB::commit();
             return response()->JSON([
                 'sw' => true,

@@ -11,7 +11,24 @@ class HistorialAccion extends Model
     use HasFactory;
 
     protected $fillable = [
-        "user_id", "accion", "descripcion", "datos_original", "datos_nuevo", "modulo", "fecha", "hora",
+        "user_id",
+        "role",
+        "accion",
+        "descripcion",
+        "datos_original",
+        "datos_nuevo",
+        "modulo",
+        "tabla",
+        "fecha",
+        "hora",
+        "sistema",
+        "ip",
+    ];
+
+
+    protected $casts = [
+        'datos_original' => 'array',
+        'datos_nuevo' => 'array',
     ];
 
     public function user()

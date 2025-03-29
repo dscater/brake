@@ -95,6 +95,11 @@ class User extends Authenticatable
         return $iniciales;
     }
 
+    public function historial_accions()
+    {
+        return $this->hasMany(HistorialAccion::class, 'user_id');
+    }
+
     // FUNCIONES
     public static function getNombreUsuario($nom, $apep)
     {

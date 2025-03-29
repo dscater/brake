@@ -6,6 +6,7 @@ use App\Models\HistorialAccion;
 use App\Models\KardexProducto;
 use App\Models\Producto;
 use App\Models\SalidaProducto;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,10 @@ class SalidaProductoController extends Controller
         "fecha_salida.required" => "Este campo es obligatorio",
         "cantidad.required" => "Este campo es obligatorio",
     ];
+
+    private $modulo = "SALIDA DE PRODUCTOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -84,16 +89,8 @@ class SalidaProductoController extends Controller
             // registrar kardex
             KardexProducto::registroEgreso("SALIDA", $nueva_salida_producto->id, $nueva_salida_producto->producto, $nueva_salida_producto->cantidad, $nueva_salida_producto->producto->precio, $nueva_salida_producto->descripcion);
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nueva_salida_producto, "salida_productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' REGISTRO UNA SALIDA DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'SALIDA DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UNA SALIDA DE PRODUCTO", $nueva_salida_producto);
 
             DB::commit();
             return redirect()->route("salida_productos.index")->with("bien", "Registro realizado");
@@ -112,6 +109,7 @@ class SalidaProductoController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
+            $old_salida_producto = clone $salida_producto;
             // incrementar el stock
             Producto::incrementarStock($salida_producto->producto, $salida_producto->cantidad);
             // VALIDAR STOCK
@@ -136,17 +134,8 @@ class SalidaProductoController extends Controller
                 ->get()->first();
             KardexProducto::actualizaRegistrosKardex($kardex->id, $kardex->producto_id);
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($salida_producto, "salida_productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' MODIFICÓ UNA SALIDA DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'SALIDA DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UNA SALIDA DE PRODUCTO", $old_salida_producto, $salida_producto);
 
             DB::commit();
             return redirect()->route("salida_productos.index")->with("bien", "Registro actualizado");
@@ -161,6 +150,7 @@ class SalidaProductoController extends Controller
     {
         DB::beginTransaction();
         try {
+            $old_salida_producto = clone $salida_producto;
             $eliminar_kardex = KardexProducto::where("tipo_registro", "SALIDA")
                 ->where("registro_id", $salida_producto->id)
                 ->where("producto_id", $salida_producto->producto_id)
@@ -194,18 +184,10 @@ class SalidaProductoController extends Controller
             // incrementar el stock
             Producto::incrementarStock($salida_producto->producto, $salida_producto->cantidad);
 
-            $datos_original = HistorialAccion::getDetalleRegistro($salida_producto, "salida_productos");
             $salida_producto->delete();
 
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' ELIMINÓ UNA SALIDA DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'SALIDA DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UNA SALIDA DE PRODUCTO", $old_salida_producto);
 
             DB::commit();
             return response()->JSON([

@@ -6,6 +6,7 @@ use App\Models\HistorialAccion;
 use App\Models\IngresoProducto;
 use App\Models\KardexProducto;
 use App\Models\Producto;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,10 @@ class IngresoProductoController extends Controller
         "cantidad.required" => "Este campo es obligatorio",
     ];
 
+    private $modulo = "INGRESO DE PRODUCTOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
+
     public function index()
     {
         return Inertia::render("IngresoProductos/Index");
@@ -33,7 +38,7 @@ class IngresoProductoController extends Controller
 
     public function listado(Request $request)
     {
-        $ingreso_productos = IngresoProducto::with(["tipo_producto","producto"])->select("ingreso_productos.*");
+        $ingreso_productos = IngresoProducto::with(["tipo_producto", "producto"])->select("ingreso_productos.*");
 
         if (isset($request->byTipo) && $request->byTipo) {
             $ingreso_productos->where("tipo", $request->byTipo);
@@ -53,7 +58,7 @@ class IngresoProductoController extends Controller
     public function paginado(Request $request)
     {
         $search = $request->search;
-        $ingreso_productos = IngresoProducto::with(["tipo_producto","producto"])->select("ingreso_productos.*");
+        $ingreso_productos = IngresoProducto::with(["tipo_producto", "producto"])->select("ingreso_productos.*");
         if (trim($search) != "") {
             $ingreso_productos->where("nombre", "LIKE", "%$search%");
         }
@@ -76,16 +81,8 @@ class IngresoProductoController extends Controller
             // registrar kardex
             KardexProducto::registroIngreso("INGRESO", $nuevo_ingreso_producto->id, $nuevo_ingreso_producto->producto, $nuevo_ingreso_producto->cantidad, $nuevo_ingreso_producto->producto->precio, $nuevo_ingreso_producto->descripcion);
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_ingreso_producto, "ingreso_productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UN INGRESO DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'INGRESO DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN INGRESO DE PRODUCTO", $nuevo_ingreso_producto);
 
             DB::commit();
             return redirect()->route("ingreso_productos.index")->with("bien", "Registro realizado");
@@ -104,6 +101,8 @@ class IngresoProductoController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
+            $old_ingreso_producto = clone $ingreso_producto;
+
             // descontar el stock
             Producto::decrementarStock($ingreso_producto->producto, $ingreso_producto->cantidad);
 
@@ -119,17 +118,8 @@ class IngresoProductoController extends Controller
                 ->get()->first();
             KardexProducto::actualizaRegistrosKardex($kardex->id, $kardex->producto_id);
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($ingreso_producto, "ingreso_productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UN INGRESO DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'INGRESO DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN INGRESO DE PRODUCTO", $old_ingreso_producto, $ingreso_producto);
 
             DB::commit();
             return redirect()->route("ingreso_productos.index")->with("bien", "Registro actualizado");
@@ -144,11 +134,14 @@ class IngresoProductoController extends Controller
     {
         DB::beginTransaction();
         try {
+            $old_ingreso_producto = clone $ingreso_producto;
+
             $eliminar_kardex = KardexProducto::where("tipo_registro", "INGRESO")
                 ->where("registro_id", $ingreso_producto->id)
                 ->where("producto_id", $ingreso_producto->producto_id)
                 ->get()
                 ->first();
+
             $id_kardex = $eliminar_kardex->id;
             $id_producto = $eliminar_kardex->producto_id;
             $eliminar_kardex->delete();
@@ -176,18 +169,12 @@ class IngresoProductoController extends Controller
 
             // descontar el stock
             Producto::decrementarStock($ingreso_producto->producto, $ingreso_producto->cantidad);
-            $datos_original = HistorialAccion::getDetalleRegistro($ingreso_producto, "ingreso_productos");
+ 
             $ingreso_producto->delete();
 
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UN INGRESO DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'INGRESO DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN INGRESO DE PRODUCTO", $old_ingreso_producto);
+
             DB::commit();
             return response()->JSON([
                 'sw' => true,

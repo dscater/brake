@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Configuracion;
+use App\Services\HistorialAccionService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,11 @@ class ConfiguracionController extends Controller
         "dir.min" => "Debes ingresar al menos :min caracteres",
     ];
 
+
+    private $modulo = "CONFIGURACIÓN";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
+
     public function index(Request $request)
     {
         if (!UserController::verificaPermiso("configuracions.index")) {
@@ -55,6 +61,7 @@ class ConfiguracionController extends Controller
         $request->validate($this->validacion, $this->messages);
         DB::beginTransaction();
         try {
+            $old_configuracion = clone $configuracion;
             $configuracion->update(array_map("mb_strtoupper", $request->except("logo")));
             if ($request->hasFile('logo')) {
                 $antiguo = $configuracion->logo;
@@ -68,6 +75,9 @@ class ConfiguracionController extends Controller
             }
             $configuracion->save();
 
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ LA CONFIGURACIÓN DEL SISTEMA", $old_configuracion, $configuracion);
+
             DB::commit();
             return redirect()->route("configuracions.index")->with("success", "Registro correcto");
         } catch (\Exception $e) {
@@ -76,7 +86,5 @@ class ConfiguracionController extends Controller
         }
     }
 
-    public function show(Configuracion $configuracion)
-    {
-    }
+    public function show(Configuracion $configuracion) {}
 }

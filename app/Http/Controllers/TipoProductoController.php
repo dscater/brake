@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\HistorialAccion;
 use App\Models\Producto;
 use App\Models\TipoProducto;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,10 @@ class TipoProductoController extends Controller
         "nombre.required" => "Este campo es obligatorio",
         "nombre.min" => "Debes ingresar al menos :min caracteres",
     ];
+
+    private $modulo = "TIPO DE PRODUCTOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -68,16 +73,9 @@ class TipoProductoController extends Controller
         try {
             // crear el TipoProducto
             $nuevo_tipo_producto = TipoProducto::create(array_map('mb_strtoupper', $request->all()));
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_tipo_producto, "tipo_productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UN TIPO DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'TIPO DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN TIPO DE PRODUCTO", $nuevo_tipo_producto);
 
             DB::commit();
             return redirect()->route("tipo_productos.index")->with("bien", "Registro realizado");
@@ -89,29 +87,20 @@ class TipoProductoController extends Controller
         }
     }
 
-    public function show(TipoProducto $tipo_producto)
-    {
-    }
+    public function show(TipoProducto $tipo_producto) {}
 
     public function update(TipoProducto $tipo_producto, Request $request)
     {
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
+            $old_tipo_producto = clone $tipo_producto;
+
             $datos_original = HistorialAccion::getDetalleRegistro($tipo_producto, "tipo_productos");
             $tipo_producto->update(array_map('mb_strtoupper', $request->all()));
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($tipo_producto, "tipo_productos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UN TIPO DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'TIPO DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN TIPO DE PRODUCTO", $old_tipo_producto, $tipo_producto);
 
             DB::commit();
             return redirect()->route("tipo_productos.index")->with("bien", "Registro actualizado");
@@ -126,6 +115,7 @@ class TipoProductoController extends Controller
     {
         DB::beginTransaction();
         try {
+            $old_tipo_producto = clone $tipo_producto;
             $usos = Producto::where("tipo_producto_id", $tipo_producto->id)->get();
             if (count($usos) > 0) {
                 throw ValidationException::withMessages([
@@ -133,17 +123,9 @@ class TipoProductoController extends Controller
                 ]);
             }
 
-            $datos_original = HistorialAccion::getDetalleRegistro($tipo_producto, "tipo_productos");
             $tipo_producto->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UN TIPO DE PRODUCTO',
-                'datos_original' => $datos_original,
-                'modulo' => 'TIPO DE PRODUCTOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN TIPO DE PRODUCTO", $old_tipo_producto);
             DB::commit();
             return response()->JSON([
                 'sw' => true,

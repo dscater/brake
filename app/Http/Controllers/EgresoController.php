@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Egreso;
+use App\Models\EgresoDetalle;
 use App\Models\HistorialAccion;
+use App\Services\HistorialAccionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +24,10 @@ class EgresoController extends Controller
         "fecha.required" => "Este campo es obligatorio",
         "fecha.date" => "Debes ingresar una fecha valida",
     ];
+
+    private $modulo = "EGRESOS ECONÓMICOS";
+
+    public function __construct(private HistorialAccionService $historialAccionService) {}
 
     public function index()
     {
@@ -91,16 +97,8 @@ class EgresoController extends Controller
                 ]);
             }
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_egreso, "egresos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'CREACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' REGISTRO UN EGRESO ECONÓMICO',
-                'datos_original' => $datos_original,
-                'modulo' => 'EGRESO ECONÓMICOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "CREACIÓN", "REGISTRO UN EGRESO", $nuevo_egreso, null, ["egreso_detalles"]);
 
             DB::commit();
             return redirect()->route("egresos.index")->with("bien", "Registro realizado");
@@ -135,7 +133,8 @@ class EgresoController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($egreso, "egresos");
+            $old_egreso = clone $egreso;
+            $old_egreso->load("egreso_detalles");
             $egreso->update([
                 "fecha" => $request->fecha,
                 "categoria_id" => $request->categoria_id,
@@ -159,17 +158,8 @@ class EgresoController extends Controller
                 }
             }
 
-            $datos_nuevo = HistorialAccion::getDetalleRegistro($egreso, "egresos");
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'MODIFICACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' MODIFICÓ UN EGRESO ECONÓMICO',
-                'datos_original' => $datos_original,
-                'datos_nuevo' => $datos_nuevo,
-                'modulo' => 'EGRESO ECONÓMICOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "MODIFICACIÓN", "ACTUALIZÓ UN EGRESO", $old_egreso, $egreso, ["egreso_detalles"]);
 
             DB::commit();
             return redirect()->route("egresos.index")->with("bien", "Registro actualizado");
@@ -184,18 +174,14 @@ class EgresoController extends Controller
     {
         DB::beginTransaction();
         try {
-            $datos_original = HistorialAccion::getDetalleRegistro($egreso, "egresos");
+            $old_egreso = clone $egreso;
+            $old_egreso->load("egreso_detalles");
+
             $egreso->egreso_detalles()->delete();
             $egreso->delete();
-            HistorialAccion::create([
-                'user_id' => Auth::user()->id,
-                'accion' => 'ELIMINACIÓN',
-                'descripcion' => 'EL USUARIO ' . Auth::user()->user . ' ELIMINÓ UN EGRESO ECONÓMICO',
-                'datos_original' => $datos_original,
-                'modulo' => 'EGRESO ECONÓMICOS',
-                'fecha' => date('Y-m-d'),
-                'hora' => date('H:i:s')
-            ]);
+
+            // registrar accion
+            $this->historialAccionService->registrarAccion($this->modulo, "ELIMINACIÓN", "ELIMINÓ UN INGRESO", $old_egreso, null, ["egreso_detalles"]);
             DB::commit();
             return response()->JSON([
                 'sw' => true,
