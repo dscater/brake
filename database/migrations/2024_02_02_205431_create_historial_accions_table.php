@@ -14,14 +14,27 @@ return new class extends Migration
         Schema::create('historial_accions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("user_id");
+            $table->string("role", 155);
             $table->string("accion", 155);
             $table->text("descripcion");
-            $table->text("datos_original")->nullable();
-            $table->text("datos_nuevo")->nullable();
+            $table->json("datos_original")->nullable();
+            $table->json("datos_nuevo")->nullable();
             $table->string("modulo", 155);
+            $table->string("tabla");
             $table->date("fecha");
             $table->time("hora");
-            $table->timestamps();
+            $table->text("sistema");
+            $table->string("creatorUserName", 250)->nullable();
+            $table->string("creatorFullUserName", 250)->nullable();
+            $table->string("creatorIp", 255)->nullable();;
+            $table->string("updaterUserName", 250)->nullable();
+            $table->string("updaterFullUserName", 250)->nullable();
+            $table->string("updaterIp", 255)->nullable();;
+            $table->string("deleterUserName", 250)->nullable();
+            $table->string("deleterFullUserName", 250)->nullable();
+            $table->string("deleterIp", 255)->nullable();;
+            $table->softDeletes();
+            $table->nullableTimestamps();
         });
     }
 

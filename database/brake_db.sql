@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 29-03-2025 a las 19:51:52
+-- Tiempo de generación: 22-04-2025 a las 01:18:18
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -162,17 +162,26 @@ INSERT INTO `egreso_detalles` (`id`, `egreso_id`, `concepto_id`, `descripcion`, 
 CREATE TABLE `historial_accions` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `role` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `accion` varchar(155) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descripcion` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `accion` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descripcion` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `datos_original` json DEFAULT NULL,
   `datos_nuevo` json DEFAULT NULL,
-  `modulo` varchar(155) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `modulo` varchar(155) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tabla` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   `sistema` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ip` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creatorUserName` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `creatorFullUserName` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `creatorIp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `updaterUserName` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `updaterFullUserName` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `updaterIp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleterUserName` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleterFullUserName` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleterIp` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -181,9 +190,10 @@ CREATE TABLE `historial_accions` (
 -- Volcado de datos para la tabla `historial_accions`
 --
 
-INSERT INTO `historial_accions` (`id`, `user_id`, `role`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `tabla`, `fecha`, `hora`, `sistema`, `ip`, `created_at`, `updated_at`) VALUES
-(1, 1, 'GERENTE', 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CATEGORÍA', '{\"id\": 9, \"tipo\": \"EGRESO\", \"nombre\": \"ASD\", \"created_at\": \"2025-03-29T19:49:55.000000Z\", \"updated_at\": \"2025-03-29T19:49:55.000000Z\", \"descripcion\": \"ASD\", \"fecha_registro\": \"2025-03-29\"}', NULL, 'CATEGORÍAS', 'categorias', '2025-03-29', '15:49:55', 'Equipo Escritorio - S.O. Windows - Navegador Chrome', '127.0.0.1', '2025-03-29 19:49:55', '2025-03-29 19:49:55'),
-(2, 1, 'GERENTE', 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UNA CATEGORÍA', '{\"id\": 9, \"tipo\": \"EGRESO\", \"nombre\": \"ASD\", \"created_at\": \"2025-03-29T19:49:55.000000Z\", \"updated_at\": \"2025-03-29T19:49:55.000000Z\", \"descripcion\": \"ASD\", \"fecha_registro\": \"2025-03-29\"}', NULL, 'CATEGORÍAS', 'categorias', '2025-03-29', '15:50:03', 'Equipo Escritorio - S.O. Windows - Navegador Chrome', '127.0.0.1', '2025-03-29 19:50:03', '2025-03-29 19:50:03');
+INSERT INTO `historial_accions` (`id`, `user_id`, `role`, `accion`, `descripcion`, `datos_original`, `datos_nuevo`, `modulo`, `tabla`, `fecha`, `hora`, `sistema`, `creatorUserName`, `creatorFullUserName`, `creatorIp`, `updaterUserName`, `updaterFullUserName`, `updaterIp`, `deleterUserName`, `deleterFullUserName`, `deleterIp`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 'GERENTE', 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA CATEGORÍA', '{\"id\": 12, \"tipo\": \"EGRESO\", \"nombre\": \"CATEGORIA CINCO\", \"created_at\": \"2025-04-22T01:16:46.000000Z\", \"updated_at\": \"2025-04-22T01:16:46.000000Z\", \"descripcion\": \"DESC\", \"fecha_registro\": \"2025-04-21\"}', NULL, 'CATEGORÍAS', 'categorias', '2025-04-21', '21:16:46', 'Equipo Escritorio - S.O. Windows - Navegador Chrome', 'admin', 'admin ', '127.0.0.1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-04-22 01:16:46', '2025-04-22 01:16:46'),
+(2, 1, 'GERENTE', 'MODIFICACIÓN', 'EL USUARIO admin ACTUALIZÓ UNA CATEGORÍA', '{\"id\": 12, \"tipo\": \"EGRESO\", \"nombre\": \"CATEGORIA CINCO\", \"created_at\": \"2025-04-22T01:16:46.000000Z\", \"updated_at\": \"2025-04-22T01:16:46.000000Z\", \"descripcion\": \"DESC\", \"fecha_registro\": \"2025-04-21\"}', '{\"id\": 12, \"tipo\": \"EGRESO\", \"nombre\": \"CATEGORIA CINCO\", \"created_at\": \"2025-04-22T01:16:46.000000Z\", \"updated_at\": \"2025-04-22T01:17:50.000000Z\", \"descripcion\": \"DESCRIPCION CINCO\", \"fecha_registro\": \"2025-04-21\"}', 'CATEGORÍAS', 'categorias', '2025-04-21', '21:17:50', 'Equipo Escritorio - S.O. Windows - Navegador Chrome', NULL, NULL, NULL, 'admin', 'admin ', '127.0.0.1', NULL, NULL, NULL, NULL, '2025-04-22 01:17:50', '2025-04-22 01:17:50'),
+(3, 1, 'GERENTE', 'ELIMINACIÓN', 'EL USUARIO admin ELIMINÓ UNA CATEGORÍA', '{\"id\": 12, \"tipo\": \"EGRESO\", \"nombre\": \"CATEGORIA CINCO\", \"created_at\": \"2025-04-22T01:16:46.000000Z\", \"updated_at\": \"2025-04-22T01:17:50.000000Z\", \"descripcion\": \"DESCRIPCION CINCO\", \"fecha_registro\": \"2025-04-21\"}', NULL, 'CATEGORÍAS', 'categorias', '2025-04-21', '21:18:02', 'Equipo Escritorio - S.O. Windows - Navegador Chrome', NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 'admin ', '127.0.0.1', NULL, '2025-04-22 01:18:02', '2025-04-22 01:18:02');
 
 -- --------------------------------------------------------
 
@@ -321,7 +331,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '2024_08_27_151753_create_productos_table', 2),
 (3, '2024_08_27_151754_create_ingreso_productos_table', 3),
 (4, '2024_08_27_151755_create_salida_productos_table', 4),
-(5, '2024_08_27_151756_create_kardex_productos_table', 5);
+(5, '2024_08_27_151756_create_kardex_productos_table', 5),
+(6, '2024_02_02_205431_create_historial_accions_table', 6);
 
 -- --------------------------------------------------------
 
@@ -547,7 +558,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `conceptos`
@@ -577,7 +588,7 @@ ALTER TABLE `egreso_detalles`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
@@ -607,7 +618,7 @@ ALTER TABLE `kardex_productos`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`

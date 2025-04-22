@@ -22,7 +22,15 @@ class HistorialAccion extends Model
         "fecha",
         "hora",
         "sistema",
-        "ip",
+        "creatorUserName",
+        "creatorFullUserName",
+        "creatorIp",
+        "updaterUserName",
+        "updaterFullUserName",
+        "updaterIp",
+        "deleterUserName",
+        "deleterFullUserName",
+        "deleterIp",
     ];
 
 

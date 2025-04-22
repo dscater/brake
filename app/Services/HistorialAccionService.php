@@ -97,7 +97,7 @@ class HistorialAccionService
             $user = Auth::user();
         }
 
-        HistorialAccion::create([
+        $datosCreacion = [
             "user_id" => $datos["user_id"],
             "role" => $user ? $user->tipo : "",
             "accion" => $datos["accion"],
@@ -109,7 +109,26 @@ class HistorialAccionService
             'fecha' => date('Y-m-d'),
             'hora' => date('H:i:s'),
             "sistema" => $desc_sistema, // Guardar el tipo de dispositivo, sistema y navegador
-            "ip" => $ip // Guardar la IP
-        ]);
+        ];
+
+        switch ($datosCreacion["accion"]) {
+            case 'CREACIÓN':
+                $datosCreacion["creatorUserName"] = $user->usuario;
+                $datosCreacion["creatorFullUserName"] = $user->full_name;
+                $datosCreacion["creatorIp"] = $ip; // Guardar la IP
+                break;
+            case 'MODIFICACIÓN':
+                $datosCreacion["updaterUserName"] = $user->usuario;
+                $datosCreacion["updaterFullUserName"] = $user->full_name;
+                $datosCreacion["updaterIp"] = $ip; // Guardar la IP
+                break;
+            case 'ELIMINACIÓN':
+                $datosCreacion["deleterUserName"] = $user->usuario;
+                $datosCreacion["deleterFullUserName"] = $user->full_name;
+                $datosCreacion["deleterIp"] = $ip; // Guardar la IP
+                break;
+        }
+
+        HistorialAccion::create($datosCreacion);
     }
 }
