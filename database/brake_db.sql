@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 10-06-2025 a las 19:43:13
+-- Tiempo de generación: 11-06-2025 a las 16:46:39
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -95,15 +95,16 @@ CREATE TABLE `configuracions` (
   `actividad` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `configuracions`
 --
 
-INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `razon_social`, `ciudad`, `dir`, `fono`, `correo`, `web`, `actividad`, `logo`, `created_at`, `updated_at`) VALUES
-(1, 'BRAKE', 'BK', 'BRAKE S.A,', 'LA PAZ', 'LOS OLIVOS', '7777777', 'BRAKE@GMAIL.COM', 'BRAKE.COM', 'ACTIVIDAD', '1716506212_1.jpg', NULL, '2025-03-29 19:47:20');
+INSERT INTO `configuracions` (`id`, `nombre_sistema`, `alias`, `razon_social`, `ciudad`, `dir`, `fono`, `correo`, `web`, `actividad`, `logo`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'BRAKE', 'BK', 'BRAKE S.A,', 'LA PAZ', 'LOS OLIVOS', '7777777', 'BRAKE@GMAIL.COM', 'BRAKE.COM', 'ACTIVIDAD', '1716506212_1.jpg', NULL, '2025-03-29 19:47:20', NULL);
 
 -- --------------------------------------------------------
 
@@ -345,7 +346,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (4, '2024_08_27_151755_create_salida_productos_table', 4),
 (5, '2024_08_27_151756_create_kardex_productos_table', 5),
 (6, '2024_02_02_205431_create_historial_accions_table', 6),
-(7, '2025_06_10_153414_add_deleted_at_to_multiple_tables', 7);
+(7, '2025_06_10_153414_add_deleted_at_to_multiple_tables', 7),
+(8, '2025_06_11_124415_add_deleted_at_to_configuracion_table', 8);
 
 -- --------------------------------------------------------
 
@@ -635,7 +637,7 @@ ALTER TABLE `kardex_productos`
 -- AUTO_INCREMENT de la tabla `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
