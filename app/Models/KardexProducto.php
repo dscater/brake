@@ -4,16 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class KardexProducto extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        "tipo_registro", "registro_id",
-        "producto_id", "detalle", "precio", "tipo_is",
-        "cantidad_ingreso", "cantidad_salida", "cantidad_saldo", "cu",
-        "monto_ingreso", "monto_salida", "monto_saldo", "fecha",
+        "tipo_registro",
+        "registro_id",
+        "producto_id",
+        "detalle",
+        "precio",
+        "tipo_is",
+        "cantidad_ingreso",
+        "cantidad_salida",
+        "cantidad_saldo",
+        "cu",
+        "monto_ingreso",
+        "monto_salida",
+        "monto_saldo",
+        "fecha",
     ];
 
 
@@ -176,5 +187,4 @@ class KardexProducto extends Model
             $item->update($datos_actualizacion);
         }
     }
-
 }
